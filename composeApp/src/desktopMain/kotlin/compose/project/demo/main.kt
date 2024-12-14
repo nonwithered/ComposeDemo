@@ -2,6 +2,7 @@ package compose.project.demo
 
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import compose.project.demo.common.legacy.App
 
 fun main() = application {
     Window(

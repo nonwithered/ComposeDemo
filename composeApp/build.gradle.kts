@@ -4,11 +4,21 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
 
+fun kapt(dependency: Provider<MinimalExternalModuleDependency>) {
+    configurations.getByName("kapt").dependencies.add(dependency.get())
+}
+
+fun ksp(dependency: Provider<MinimalExternalModuleDependency>) {
+    configurations.getByName("ksp").dependencies.add(dependency.get())
+}
+
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.kotlin.ksp)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 kotlin {
@@ -30,8 +40,8 @@ kotlin {
 //        }
 //    }
     
-//    jvm("desktop")
-    
+    jvm("desktop")
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         moduleName = "composeApp"
@@ -53,13 +63,23 @@ kotlin {
     }
     
     sourceSets {
-//        val desktopMain by getting
+        val desktopMain by getting
         
         androidMain.dependencies {
             implementation(compose.preview)
+            implementation(libs.auto.service)
             implementation(libs.androidx.activity.compose)
+            implementation(libs.androidx.recyclerview)
+            implementation(libs.androidx.appcompat)
+            implementation(libs.androidx.runtime.livedata)
+            implementation(libs.androidx.recyclerview)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
+//            kapt(libs.auto.service)
+//            ksp(libs.zacsweers.autoservice.ksp)
         }
         commonMain.dependencies {
+            implementation(kotlin("reflect"))
+            implementation(projects.shared)
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material)
@@ -68,12 +88,12 @@ kotlin {
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
-            implementation(projects.shared)
+            implementation(libs.kotlinx.datetime)
         }
-//        desktopMain.dependencies {
-//            implementation(compose.desktop.currentOs)
-//            implementation(libs.kotlinx.coroutines.swing)
-//        }
+        desktopMain.dependencies {
+            implementation(compose.desktop.currentOs)
+            implementation(libs.kotlinx.coroutines.swing)
+        }
     }
 }
 

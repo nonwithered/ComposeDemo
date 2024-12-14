@@ -1,3 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ComposeDemo</string>
+    <string name="app_name">My Application</string>
+    <string name="legacy_main_page">My Legacy Main Page</string>
+    <string name="select_page">My Page</string>
+    <string name="page_selector">My Selector</string>
 </resources>
