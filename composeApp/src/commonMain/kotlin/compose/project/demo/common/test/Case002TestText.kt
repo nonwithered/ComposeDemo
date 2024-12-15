@@ -17,9 +17,7 @@ import compose.project.demo.common.utils.logD
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.case_002_test_text_res
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
 fun Case002TestText() {
     val TAG = "Case002TestText"

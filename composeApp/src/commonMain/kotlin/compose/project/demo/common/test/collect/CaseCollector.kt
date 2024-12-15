@@ -10,6 +10,7 @@ object CaseCollector {
         "Case002TestText" case { Case002TestText() },
         "Case003TestSpanned" case { Case003TestSpanned() },
         "Case004TestEdit" case { Case004TestEdit() },
+        "Case005TestImage" case { Case005TestImage() },
     )
 
     private infix fun String.case(view: @Composable () -> Unit): CaseItem {

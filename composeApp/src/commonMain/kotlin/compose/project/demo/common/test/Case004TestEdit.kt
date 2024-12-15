@@ -16,9 +16,7 @@ import compose.project.demo.common.utils.logD
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
 import org.jetbrains.compose.resources.painterResource
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
 fun Case004TestEdit() {
     val TAG = "Case004TestEdit"

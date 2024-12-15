@@ -27,9 +27,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.utils.logD
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
 fun Case003TestSpanned() {
     val TAG = "Case003TestSpanned"

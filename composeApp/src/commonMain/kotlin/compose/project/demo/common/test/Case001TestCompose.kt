@@ -25,9 +25,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.utils.logD
 import kotlinx.datetime.Clock
-import org.jetbrains.compose.ui.tooling.preview.Preview
 
-@Preview
 @Composable
 fun Case001TestCompose() {
     val TAG = "Case001TestCompose"
