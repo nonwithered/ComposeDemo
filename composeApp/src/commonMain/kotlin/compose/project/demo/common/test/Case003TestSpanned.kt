@@ -27,7 +27,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.utils.logD
-import compose.project.demo.common.utils.logE
 import org.jetbrains.compose.ui.tooling.preview.Preview
 
 @Preview
@@ -53,7 +52,7 @@ fun Case003TestSpanned() {
                             color = Color.Gray,
                         ),
                     ),
-                    linkInteractionListener = { TAG.logE { "onClick $it" } },
+                    linkInteractionListener = { TAG.logD { "onClick $it" } },
                 )) {
                     append("000000000000")
                 }
