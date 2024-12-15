@@ -8,6 +8,7 @@ object CaseCollector {
     private val list: List<CaseItem> = listOf(
         "Case001TestCompose" case { Case001TestCompose() },
         "Case002TestText" case { Case002TestText() },
+        "Case003TestSpanned" case { Case003TestSpanned() },
     )
 
     private infix fun String.case(view: @Composable () -> Unit): CaseItem {
