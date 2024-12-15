@@ -1,5 +1,6 @@
 package compose.project.demo.android.select
 
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,7 +21,7 @@ class CaseItemFragment : BaseComposeFragment() {
     }
 
     @Composable
-    override fun ComposeContent() {
+    override fun BoxScope.ComposeContent() {
         var showing by remember {
             mutableStateOf(false)
         }
@@ -35,11 +36,12 @@ class CaseItemFragment : BaseComposeFragment() {
     }
 
     @Composable
-    private fun CaseContent() {
+    private fun BoxScope.CaseContent() {
         val pageData by viewModel<SelectViewModel>(
             viewModelStoreOwner = requireActivity(),
         ).pageData.asState
         TAG.logD { "CaseContent ${pageData.pageName}" }
-        CaseItemExtrasData(pageData.extras).caseItem?.view?.invoke()
+        val view = CaseItemExtrasData(pageData.extras).caseItem?.view ?: return
+        view()
     }
 }

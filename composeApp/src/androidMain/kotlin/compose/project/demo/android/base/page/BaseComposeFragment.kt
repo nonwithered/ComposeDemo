@@ -3,7 +3,9 @@ package compose.project.demo.android.base.page
 import android.os.Bundle
 import android.view.View
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Scaffold
 import androidx.compose.runtime.Composable
@@ -23,7 +25,7 @@ abstract class BaseComposeFragment : BaseFragment() {
                 modifier = Modifier.fillMaxSize(),
             ) { innerPadding ->
                 Box(
-                    modifier = Modifier.padding(innerPadding),
+                    modifier = Modifier.fillMaxWidth().padding(innerPadding),
                 ) {
                     ComposeContent()
                 }
@@ -32,5 +34,5 @@ abstract class BaseComposeFragment : BaseFragment() {
     }
 
     @Composable
-    protected abstract fun ComposeContent()
+    protected abstract fun BoxScope.ComposeContent()
 }

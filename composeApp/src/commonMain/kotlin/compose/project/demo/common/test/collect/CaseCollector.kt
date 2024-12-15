@@ -1,5 +1,6 @@
 package compose.project.demo.common.test.collect
 
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import compose.project.demo.common.test.*
 
@@ -13,7 +14,7 @@ object CaseCollector {
         "Case005TestImage" case { Case005TestImage() },
     )
 
-    private infix fun String.case(view: @Composable () -> Unit): CaseItem {
+    private infix fun String.case(view: @Composable BoxScope.() -> Unit): CaseItem {
         val name = this
         return CaseItem(
             name = name,

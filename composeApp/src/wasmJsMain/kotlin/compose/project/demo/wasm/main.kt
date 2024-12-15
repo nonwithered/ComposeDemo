@@ -1,6 +1,9 @@
 package compose.project.demo.wasm
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeViewport
 import compose.project.demo.common.legacy.App
 import compose.project.demo.common.test.collect.CaseCollector
@@ -18,7 +21,12 @@ fun main() {
     }
     val search = CaseItemProperties(window.location.search)
     ComposeViewport(document.body!!) {
-        CaseCollector.firstOrNull(search.case)?.view?.invoke() ?: App()
+        val view = CaseCollector.firstOrNull(search.case)?.view
+        Box(
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            view?.invoke(this) ?: App()
+        }
     }
 }
 
