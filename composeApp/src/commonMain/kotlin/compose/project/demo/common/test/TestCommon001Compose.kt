@@ -33,7 +33,6 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
 
     @Composable
     override fun BoxScope.Content() {
-        TAG.logD { "refresh" }
         var editText by remember {
             mutableStateOf("")
         }

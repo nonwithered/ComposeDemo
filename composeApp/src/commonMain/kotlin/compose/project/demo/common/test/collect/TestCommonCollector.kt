@@ -13,5 +13,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon006Pager.asCaseItem,
         TestCommon007Constraint.asCaseItem,
         TestCommon008Constraint.asCaseItem,
+        TestCommon009List.asCaseItem,
     )
 }

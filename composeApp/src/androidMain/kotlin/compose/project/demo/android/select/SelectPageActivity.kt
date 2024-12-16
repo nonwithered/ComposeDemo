@@ -8,7 +8,6 @@ import compose.project.demo.R
 import compose.project.demo.android.base.page.BaseActivity
 import compose.project.demo.common.utils.elseTrue
 import compose.project.demo.common.utils.logD
-import kotlinx.coroutines.flow.update
 
 class SelectPageActivity : BaseActivity() {
 
@@ -28,10 +27,8 @@ class SelectPageActivity : BaseActivity() {
 
     private val pageData by lazy {
         SelectPageData(intent.extras).also { pageData ->
-            vm.pageData.update {
-                TAG.logD { "update pageData ${pageData.pageName}" }
-                pageData
-            }
+            vm.pageData.value = pageData
+            TAG.logD { "update pageData ${pageData.pageName}" }
         }
     }
 

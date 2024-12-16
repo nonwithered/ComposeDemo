@@ -2,6 +2,7 @@ package compose.project.demo.common.test.collect
 
 import compose.project.demo.common.test.collect.TestCase.Companion.name
 import compose.project.demo.common.test.collect.TestCase.Companion.type
+import compose.project.demo.common.utils.logD
 
 abstract class BaseTestCollector {
 
@@ -14,7 +15,10 @@ abstract class BaseTestCollector {
             }
             return CaseItem(
                 name = name,
-                view = { Content() },
+                view = {
+                    "asCaseItem".logD { "Content $name" }
+                    Content()
+                },
             )
         }
 }
