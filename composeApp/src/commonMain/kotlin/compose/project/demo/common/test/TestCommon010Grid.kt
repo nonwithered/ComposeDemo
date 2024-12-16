@@ -1,13 +1,16 @@
 package compose.project.demo.common.test
 
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -16,7 +19,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -31,7 +33,7 @@ import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 @OptIn(ExperimentalUuidApi::class)
-object TestCommon009List : TestCase<TestCommon009List> {
+object TestCommon010Grid : TestCase<TestCommon010Grid> {
 
     private val ids = AtomicReference(0)
 
@@ -47,6 +49,12 @@ object TestCommon009List : TestCase<TestCommon009List> {
         ids.compareAndSet(ids.get(), 0)
         list.clear()
         list += mutableStateListOf(
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
             newItem(),
             newItem(),
             newItem(),
@@ -91,7 +99,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
         return ItemData(
             id = id,
             name = MutableStateFlow(name ?: id),
-            style = style ?: (id % 2),
+            style = style ?: (id % 3),
         )
     }
 
@@ -112,29 +120,39 @@ object TestCommon009List : TestCase<TestCommon009List> {
                 reset()
             }
         }
-        val state = rememberLazyListState()
+        val state = rememberLazyGridState()
         TAG.logD { "LazyColumn" }
-        LazyColumn(
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(3),
             modifier = Modifier.fillMaxSize(),
             state = state,
             contentPadding = PaddingValues(8.dp),
-            reverseLayout = true,
-            horizontalAlignment = Alignment.End,
         ) {
             itemsIndexed(
                 items = list,
+                span = { _, it ->
+                    val id = it.id
+                    var name = it.name.value
+                    val style = it.style
+                    TAG.logD { "itemsIndexed span $id $name $style $maxLineSpan $maxCurrentLineSpan" }
+                    GridItemSpan(when (style) { 0 -> { 1 } 1 -> { 2 } 2 -> { maxCurrentLineSpan } else -> { maxLineSpan } })
+                },
 //                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
-                Row(
+                Column(
                     modifier = Modifier.height(200.dp),
                 ) {
                     val id = it.id
                     var name by it.name.asState
-                    val style = it.style != 0
+                    val style = it.style
                     TAG.logD { "itemsIndexed $id $name $style" }
-                    Text(text = "$id    $name    $style", color = if (style) Color.Red else Color.Black)
+                    Text(
+                        text = "$id    $name    $style", color = when (style) { 0 -> { Color.Red } 1 -> { Color.Green } 2 -> { Color.Blue } else -> { Color.Black } },
+                        modifier = Modifier.fillMaxWidth()
+                    )
                     Button(
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             list.add(i + 1, it.newItem())
                             updateData(it, "insert")
