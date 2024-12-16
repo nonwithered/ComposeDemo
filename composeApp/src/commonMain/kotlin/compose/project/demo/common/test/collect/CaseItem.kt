@@ -5,5 +5,5 @@ import androidx.compose.runtime.Composable
 
 data class CaseItem(
     val name: String,
-    val view: @Composable BoxScope.() -> Unit
+    val view: @Composable BoxScope.() -> Unit,
 )

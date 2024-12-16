@@ -6,7 +6,7 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.window.ComposeViewport
 import compose.project.demo.common.legacy.App
-import compose.project.demo.common.test.collect.CaseCollector
+import compose.project.demo.common.test.collect.TestCommonCollector
 import compose.project.demo.common.utils.logI
 import compose.project.demo.wasm.bean.URLSearchParamsProperties
 import kotlinx.browser.document
@@ -16,12 +16,12 @@ import org.w3c.dom.url.URLSearchParams
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     val TAG = "main"
-    CaseCollector.forEach {
+    TestCommonCollector.forEach {
         TAG.logI { it.name }
     }
     val search = CaseItemProperties(window.location.search)
     ComposeViewport(document.body!!) {
-        val view = CaseCollector.firstOrNull(search.case)?.view
+        val view = TestCommonCollector.firstOrNull(search.case)?.view
         Box(
             modifier = Modifier.fillMaxWidth(),
         ) {

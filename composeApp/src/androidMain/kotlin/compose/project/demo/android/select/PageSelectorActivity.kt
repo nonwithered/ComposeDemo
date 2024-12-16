@@ -19,6 +19,6 @@ class PageSelectorActivity : BaseActivity() {
     private fun initList() {
         val listView: RecyclerView = findViewById(R.id.list_view)
         listView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
-        listView.adapter = SelectViewAdapter(SelectItem::class.java)
+        listView.adapter = SelectViewAdapter()
     }
 }

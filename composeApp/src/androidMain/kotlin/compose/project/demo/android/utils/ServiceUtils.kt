@@ -1,11 +1,16 @@
 package compose.project.demo.android.utils
 
 import java.util.ServiceLoader
+import kotlin.reflect.KClass
 
-fun <T> loadService(type: Class<T>): List<T> {
-    return ServiceLoader.load(type).iterator().asSequence().toList()
+fun <T> Class<T>.loadService(): List<T> {
+    return ServiceLoader.load(this).iterator().asSequence().toList()
 }
 
-inline fun <reified T> loadService(): List<T> {
-    return loadService(T::class.java)
+fun <T : Any> KClass<T>.loadService(): List<T> {
+    return java.loadService()
+}
+
+inline fun <reified T : Any> loadService(): List<T> {
+    return T::class.loadService()
 }
