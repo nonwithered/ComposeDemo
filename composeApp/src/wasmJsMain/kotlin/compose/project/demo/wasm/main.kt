@@ -30,9 +30,6 @@ private fun content() {
     items.forEach {
         "Content".logD { it.name }
     }
-    if (route()) {
-        return
-    }
     window.location.run {
         "location".logD { "href $href" }
         "location".logD { "origin $origin" }
@@ -44,6 +41,9 @@ private fun content() {
         "location".logD { "search $search" }
         "location".logD { "hash $hash" }
         "location".logD { "ancestorOrigins $ancestorOrigins" }
+    }
+    if (route()) {
+        return
     }
     viewport {
         val scrollState = rememberScrollState()

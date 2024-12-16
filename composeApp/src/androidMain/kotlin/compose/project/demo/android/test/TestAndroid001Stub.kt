@@ -8,6 +8,6 @@ object TestAndroid001Stub : TestCase<TestAndroid001Stub> {
 
     @Composable
     override fun BoxScope.Content() {
-        TODO("Not yet implemented")
+//        TODO("Not yet implemented")
     }
 }

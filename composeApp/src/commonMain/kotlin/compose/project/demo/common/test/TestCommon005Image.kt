@@ -68,11 +68,7 @@ object TestCommon005Image : TestCase<TestCommon005Image> {
             Image(
                 bitmap = imageResource(Res.drawable.genetic_data_svgrepo_com),
                 contentDescription = "zxcv",
-                modifier = Modifier.size(500.dp)
-                    .wrapContentSize(
-                        align = Alignment.BottomEnd,
-                        unbounded = true,
-                    ),
+                modifier = Modifier.size(500.dp),
                 alignment = Alignment.Center,
                 contentScale = ContentScale.FillBounds,
                 alpha = 1f,

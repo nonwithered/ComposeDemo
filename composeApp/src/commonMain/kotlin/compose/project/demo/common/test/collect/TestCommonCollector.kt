@@ -15,5 +15,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon008Constraint.asCaseItem,
         TestCommon009List.asCaseItem,
         TestCommon010Grid.asCaseItem,
+        TestCommon011Staggered.asCaseItem,
     )
 }

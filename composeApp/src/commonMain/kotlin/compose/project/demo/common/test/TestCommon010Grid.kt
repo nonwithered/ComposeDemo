@@ -1,5 +1,6 @@
 package compose.project.demo.common.test
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,31 +23,30 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.AtomicReference
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
 import compose.project.demo.common.utils.asState
 import compose.project.demo.common.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
+import kotlin.concurrent.Volatile
+import kotlin.random.Random
 
-@OptIn(ExperimentalUuidApi::class)
 object TestCommon010Grid : TestCase<TestCommon010Grid> {
 
-    private val ids = AtomicReference(0)
+    @Volatile
+    private var ids = 0
 
     private val list = mutableStateListOf<ItemData>()
 
-    private val updateEvent = MutableStateFlow(Uuid.random() to "")
+    private val updateEvent = MutableStateFlow(Random.nextInt() to "")
 
     init {
         reset()
     }
 
     private fun reset() {
-        ids.compareAndSet(ids.get(), 0)
+        ids = 0
         list.clear()
         list += mutableStateListOf(
             newItem(),
@@ -62,29 +62,24 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
             newItem(),
             newItem(),
         )
-        updateEvent.value = Uuid.random() to "empty"
+        updateEvent.value = Random.nextInt() to "empty"
     }
 
     private fun updateData(itemData: ItemData, action: String) {
         val id = itemData.id
         val name = itemData.name.value
-        val style = itemData.style
-        updateEvent.value = Uuid.random() to "$action $id $name $style"
+        val style = itemData.style.value
+        updateEvent.value = Random.nextInt() to "$action $id $name $style"
     }
 
     private data class ItemData(
         val id: Int,
         val name: MutableStateFlow<Int>,
-        val style: Int,
+        val style: MutableStateFlow<Int>,
     )
 
     private fun newId(): Int {
-        while (true) {
-            val last = ids.get()
-            if (ids.compareAndSet(last, last + 1)) {
-                return last + 1
-            }
-        }
+        return ++ids
     }
 
     private fun newItem(): ItemData {
@@ -95,11 +90,11 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
     private fun ItemData?.newItem(): ItemData {
         val id = newId()
         val name = this?.name?.value
-        val style = this?.style
+        val style = this?.style?.value
         return ItemData(
             id = id,
             name = MutableStateFlow(name ?: id),
-            style = style ?: (id % 3),
+            style = MutableStateFlow(style ?: (id % 3)),
         )
     }
 
@@ -133,22 +128,23 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
                 span = { _, it ->
                     val id = it.id
                     var name = it.name.value
-                    val style = it.style
+                    val style = it.style.value
                     TAG.logD { "itemsIndexed span $id $name $style $maxLineSpan $maxCurrentLineSpan" }
                     GridItemSpan(when (style) { 0 -> { 1 } 1 -> { 2 } 2 -> { maxCurrentLineSpan } else -> { maxLineSpan } })
                 },
 //                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
+                val id = it.id
+                var name by it.name.asState
+                var style by it.style.asState
+                TAG.logD { "itemsIndexed $id $name $style" }
                 Column(
-                    modifier = Modifier.height(200.dp),
+                    modifier = Modifier.height(200.dp)
+                        .background(when (style) { 0 -> { Color.Red } 1 -> { Color.Green } 2 -> { Color.Blue } else -> { Color.Black } }),
                 ) {
-                    val id = it.id
-                    var name by it.name.asState
-                    val style = it.style
-                    TAG.logD { "itemsIndexed $id $name $style" }
                     Text(
-                        text = "$id    $name    $style", color = when (style) { 0 -> { Color.Red } 1 -> { Color.Green } 2 -> { Color.Blue } else -> { Color.Black } },
+                        text = "$id    $name    $style",
                         modifier = Modifier.fillMaxWidth()
                     )
                     Button(
@@ -171,6 +167,10 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
                     Button(
                         onClick = {
                             name += 1
+                            style = (style + 1) % 3
+                            val dirty = list + emptyList()
+                            list.clear()
+                            list += dirty
                             updateData(it, "update")
                         }
                     ) {

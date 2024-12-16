@@ -1,14 +1,17 @@
 package compose.project.demo.common.test
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
+import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
+import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +20,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -30,7 +32,7 @@ import kotlinx.coroutines.launch
 import kotlin.concurrent.Volatile
 import kotlin.random.Random
 
-object TestCommon009List : TestCase<TestCommon009List> {
+object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
 
     @Volatile
     private var ids = 0
@@ -53,6 +55,16 @@ object TestCommon009List : TestCase<TestCommon009List> {
             newItem(),
             newItem(),
             newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
+            newItem(),
         )
         updateEvent.value = Random.nextInt() to "empty"
     }
@@ -60,14 +72,14 @@ object TestCommon009List : TestCase<TestCommon009List> {
     private fun updateData(itemData: ItemData, action: String) {
         val id = itemData.id
         val name = itemData.name.value
-        val style = itemData.style
+        val style = itemData.style.value
         updateEvent.value = Random.nextInt() to "$action $id $name $style"
     }
 
     private data class ItemData(
         val id: Int,
         val name: MutableStateFlow<Int>,
-        val style: Int,
+        val style: MutableStateFlow<Int>,
     )
 
     private fun newId(): Int {
@@ -82,11 +94,11 @@ object TestCommon009List : TestCase<TestCommon009List> {
     private fun ItemData?.newItem(): ItemData {
         val id = newId()
         val name = this?.name?.value
-        val style = this?.style
+        val style = this?.style?.value
         return ItemData(
             id = id,
             name = MutableStateFlow(name ?: id),
-            style = style ?: (id % 2),
+            style = MutableStateFlow(style ?: (id % 4)),
         )
     }
 
@@ -107,29 +119,39 @@ object TestCommon009List : TestCase<TestCommon009List> {
                 reset()
             }
         }
-        val state = rememberLazyListState()
+        val state = rememberLazyStaggeredGridState()
         TAG.logD { "LazyColumn" }
-        LazyColumn(
+        LazyVerticalStaggeredGrid(
+            columns = StaggeredGridCells.Fixed(3),
             modifier = Modifier.fillMaxSize(),
             state = state,
             contentPadding = PaddingValues(8.dp),
-            reverseLayout = true,
-            horizontalAlignment = Alignment.End,
         ) {
             itemsIndexed(
                 items = list,
+                span = { _, it ->
+                    if (it.style.value == 3) {
+                        StaggeredGridItemSpan.FullLine
+                    } else {
+                        StaggeredGridItemSpan.SingleLane
+                    }
+                },
 //                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
                 val id = it.id
                 var name by it.name.asState
-                val style = it.style
+                var style by it.style.asState
                 TAG.logD { "itemsIndexed $id $name $style" }
-                Row(
-                    modifier = Modifier.height(100.dp),
+                Column(
+                    modifier = Modifier.background(when (style) { 0 -> { Color.Red } 1 -> { Color.Green } 2 -> { Color.Blue } else -> { Color.Black } }),
                 ) {
-                    Text(text = "$id    $name    $style", color = if (style != 0) Color.Red else Color.Black)
+                    Text(
+                        text = "$id    $name    $style",
+                        modifier = Modifier.fillMaxWidth()
+                    )
                     Button(
+                        modifier = Modifier.fillMaxWidth(),
                         onClick = {
                             list.add(i + 1, it.newItem())
                             updateData(it, "insert")
@@ -146,9 +168,13 @@ object TestCommon009List : TestCase<TestCommon009List> {
                         Text("remove")
                     }
                     Button(
-                        modifier = Modifier.fillMaxHeight(),
+                        modifier = Modifier.height(50.dp * (style + 1)),
                         onClick = {
                             name += 1
+                            style = (style + 1) % 4
+                            val dirty = list + emptyList()
+                            list.clear()
+                            list += dirty
                             updateData(it, "update")
                         }
                     ) {
