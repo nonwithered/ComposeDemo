@@ -17,18 +17,4 @@ abstract class BaseTestCollector {
                 view = { Content() },
             )
         }
-
-    fun firstOrNull(name: String?): CaseItem? {
-        return list.firstOrNull {
-            it.name == name
-        }
-    }
-
-    fun <T> map(block: (CaseItem) -> T): List<T> {
-        return list.map(block)
-    }
-
-    fun forEach(block: (CaseItem) -> Unit) {
-        list.forEach(block)
-    }
 }

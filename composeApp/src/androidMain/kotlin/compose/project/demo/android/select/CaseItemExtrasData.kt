@@ -12,7 +12,9 @@ class CaseItemExtrasData(
     private var name: String? by "case".property()
 
     var caseItem: CaseItem?
-        get() = TestAndroidCollector.firstOrNull(name)
+        get() = TestAndroidCollector.list.firstOrNull {
+            it.name == name
+        }
         set(value) {
             name = value?.name
         }
