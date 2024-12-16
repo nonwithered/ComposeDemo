@@ -15,7 +15,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
+import composedemo.composeapp.generated.resources.set_up_svgrepo_com
+import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun Case005TestImage() {
@@ -30,22 +33,22 @@ fun Case005TestImage() {
             colorFilter = null,
         )
         Image(
-            painter = painterResource(Res.drawable.compose_multiplatform),
-            contentDescription = "qwer",
-            modifier = Modifier.size(100.dp),
-            alignment = Alignment.Center,
-            contentScale = ContentScale.FillBounds,
-            alpha = 1f,
-            colorFilter = ColorFilter.tint(Color.Blue, BlendMode.SrcIn),
-        )
-        Image(
-            painter = painterResource(Res.drawable.compose_multiplatform),
-            contentDescription = "qwer",
+            imageVector = vectorResource(Res.drawable.compose_multiplatform),
+            contentDescription = "asdf",
             modifier = Modifier.size(100.dp).background(Color.Yellow),
             alignment = Alignment.Center,
             contentScale = ContentScale.FillBounds,
             alpha = 0.5f,
             colorFilter = null,
+        )
+        Image(
+            bitmap = imageResource(Res.drawable.set_up_svgrepo_com),
+            contentDescription = "zxcv",
+            modifier = Modifier.size(100.dp, 50.dp),
+            alignment = Alignment.Center,
+            contentScale = ContentScale.FillBounds,
+            alpha = 1f,
+            colorFilter = ColorFilter.tint(Color.Blue, BlendMode.SrcIn),
         )
     }
 }
