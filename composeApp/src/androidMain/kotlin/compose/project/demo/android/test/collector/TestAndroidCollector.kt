@@ -7,6 +7,6 @@ import compose.project.demo.common.test.collect.TestCommonCollector
 object TestAndroidCollector : BaseTestCollector() {
 
     override val list = TestCommonCollector.list + listOf(
-        TestAndroid001Pager.asCaseItem
+        TestAndroid001Stub.asCaseItem
     )
 }

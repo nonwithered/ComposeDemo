@@ -1,10 +1,6 @@
 package compose.project.demo.common.test.collect
 
-import compose.project.demo.common.test.TestCommon001Compose
-import compose.project.demo.common.test.TestCommon002Text
-import compose.project.demo.common.test.TestCommon003Spanned
-import compose.project.demo.common.test.TestCommon004Edit
-import compose.project.demo.common.test.TestCommon005Image
+import compose.project.demo.common.test.*
 
 object TestCommonCollector : BaseTestCollector() {
 
@@ -14,5 +10,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon003Spanned.asCaseItem,
         TestCommon004Edit.asCaseItem,
         TestCommon005Image.asCaseItem,
+        TestCommon006Pager.asCaseItem,
     )
 }
