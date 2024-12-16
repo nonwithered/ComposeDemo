@@ -11,5 +11,7 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon004Edit.asCaseItem,
         TestCommon005Image.asCaseItem,
         TestCommon006Pager.asCaseItem,
+        TestCommon007Constraint.asCaseItem,
+        TestCommon008Constraint.asCaseItem,
     )
 }

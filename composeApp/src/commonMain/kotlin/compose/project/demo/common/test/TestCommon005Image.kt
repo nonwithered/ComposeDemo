@@ -22,7 +22,7 @@ import compose.project.demo.common.test.collect.TestCase.Companion.TAG
 import compose.project.demo.common.utils.logD
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
-import composedemo.composeapp.generated.resources.set_up_svgrepo_com
+import composedemo.composeapp.generated.resources.genetic_data_svgrepo_com
 import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.vectorResource
@@ -66,7 +66,7 @@ object TestCommon005Image : TestCase<TestCommon005Image> {
                 colorFilter = null,
             )
             Image(
-                bitmap = imageResource(Res.drawable.set_up_svgrepo_com),
+                bitmap = imageResource(Res.drawable.genetic_data_svgrepo_com),
                 contentDescription = "zxcv",
                 modifier = Modifier.size(500.dp)
                     .wrapContentSize(

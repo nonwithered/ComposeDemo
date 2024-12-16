@@ -74,6 +74,8 @@ kotlin {
             implementation(libs.androidx.runtime.livedata)
             implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+//            implementation(libs.androidx.constraintlayout)
+//            implementation(libs.androidx.constraintlayout.compose)
 //            kapt(libs.auto.service)
 //            ksp(libs.zacsweers.autoservice.ksp)
         }
@@ -89,6 +91,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.constraintlayout.compose.multiplatform)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
