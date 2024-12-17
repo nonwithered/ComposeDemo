@@ -25,21 +25,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
+import compose.project.demo.common.utils.MutableStateFlowVolatile
 import compose.project.demo.common.utils.asState
+import compose.project.demo.common.utils.asStateVolatile
 import compose.project.demo.common.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlin.concurrent.Volatile
-import kotlin.random.Random
 
 object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
 
     @Volatile
     private var ids = 0
 
-    private val list = mutableStateListOf<ItemData>()
-
-    private val updateEvent = MutableStateFlow(Random.nextInt() to "")
+    private val list = MutableStateFlowVolatile(mutableListOf<ItemData>())
 
     init {
         reset()
@@ -47,8 +45,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
 
     private fun reset() {
         ids = 0
-        list.clear()
-        list += mutableStateListOf(
+        list.value = mutableStateListOf(
             newItem(),
             newItem(),
             newItem(),
@@ -66,14 +63,12 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
             newItem(),
             newItem(),
         )
-        updateEvent.value = Random.nextInt() to "empty"
     }
 
     private fun updateData(itemData: ItemData, action: String) {
         val id = itemData.id
         val name = itemData.name.value
         val style = itemData.style.value
-        updateEvent.value = Random.nextInt() to "$action $id $name $style"
     }
 
     private data class ItemData(
@@ -106,11 +101,6 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
     override fun BoxScope.Content() {
         LaunchedEffect(null) {
             TAG.logD { "LaunchedEffect" }
-            launch {
-                updateEvent.collect { (_, action) ->
-                    TAG.logD { "collect $action" }
-                }
-            }
         }
         DisposableEffect(null) {
             TAG.logD { "DisposableEffect" }
@@ -121,6 +111,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
         }
         val state = rememberLazyStaggeredGridState()
         TAG.logD { "LazyColumn" }
+        var items by list.asStateVolatile
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(3),
             modifier = Modifier.fillMaxSize(),
@@ -128,7 +119,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
             contentPadding = PaddingValues(8.dp),
         ) {
             itemsIndexed(
-                items = list,
+                items = items,
                 span = { _, it ->
                     if (it.style.value == 3) {
                         StaggeredGridItemSpan.FullLine
@@ -153,7 +144,9 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
                     Button(
                         modifier = Modifier.fillMaxWidth(),
                         onClick = {
-                            list.add(i + 1, it.newItem())
+                            items = items.apply {
+                                add(i + 1, it.newItem())
+                            }
                             updateData(it, "insert")
                         },
                     ) {
@@ -161,7 +154,9 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
                     }
                     Button(
                         onClick = {
-                            list -= it
+                            items = items.apply {
+                                remove(it)
+                            }
                             updateData(it, "remove")
                         }
                     ) {
@@ -172,9 +167,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
                         onClick = {
                             name += 1
                             style = (style + 1) % 4
-                            val dirty = list + emptyList()
-                            list.clear()
-                            list += dirty
+                            items = items
                             updateData(it, "update")
                         }
                     ) {

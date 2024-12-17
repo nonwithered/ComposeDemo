@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,21 +22,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
+import compose.project.demo.common.utils.MutableStateFlowVolatile
 import compose.project.demo.common.utils.asState
+import compose.project.demo.common.utils.asStateVolatile
 import compose.project.demo.common.utils.logD
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.launch
 import kotlin.concurrent.Volatile
-import kotlin.random.Random
 
 object TestCommon009List : TestCase<TestCommon009List> {
 
     @Volatile
     private var ids = 0
 
-    private val list = mutableStateListOf<ItemData>()
-
-    private val updateEvent = MutableStateFlow(Random.nextInt() to "")
+    private val list = MutableStateFlowVolatile(mutableListOf<ItemData>())
 
     init {
         reset()
@@ -45,8 +42,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
 
     private fun reset() {
         ids = 0
-        list.clear()
-        list += mutableStateListOf(
+        list.value = mutableListOf(
             newItem(),
             newItem(),
             newItem(),
@@ -54,14 +50,6 @@ object TestCommon009List : TestCase<TestCommon009List> {
             newItem(),
             newItem(),
         )
-        updateEvent.value = Random.nextInt() to "empty"
-    }
-
-    private fun updateData(itemData: ItemData, action: String) {
-        val id = itemData.id
-        val name = itemData.name.value
-        val style = itemData.style
-        updateEvent.value = Random.nextInt() to "$action $id $name $style"
     }
 
     private data class ItemData(
@@ -94,11 +82,6 @@ object TestCommon009List : TestCase<TestCommon009List> {
     override fun BoxScope.Content() {
         LaunchedEffect(null) {
             TAG.logD { "LaunchedEffect" }
-            launch {
-                updateEvent.collect { (_, action) ->
-                    TAG.logD { "collect $action" }
-                }
-            }
         }
         DisposableEffect(null) {
             TAG.logD { "DisposableEffect" }
@@ -109,6 +92,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
         }
         val state = rememberLazyListState()
         TAG.logD { "LazyColumn" }
+        var items by list.asStateVolatile
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = state,
@@ -117,7 +101,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
             horizontalAlignment = Alignment.End,
         ) {
             itemsIndexed(
-                items = list,
+                items = items,
 //                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
@@ -131,16 +115,18 @@ object TestCommon009List : TestCase<TestCommon009List> {
                     Text(text = "$id    $name    $style", color = if (style != 0) Color.Red else Color.Black)
                     Button(
                         onClick = {
-                            list.add(i + 1, it.newItem())
-                            updateData(it, "insert")
+                            items = items.apply {
+                                add(i + 1, it.newItem())
+                            }
                         },
                     ) {
                         Text("insert")
                     }
                     Button(
                         onClick = {
-                            list -= it
-                            updateData(it, "remove")
+                            items = items.apply {
+                                remove(it)
+                            }
                         }
                     ) {
                         Text("remove")
@@ -149,7 +135,6 @@ object TestCommon009List : TestCase<TestCommon009List> {
                         modifier = Modifier.fillMaxHeight(),
                         onClick = {
                             name += 1
-                            updateData(it, "update")
                         }
                     ) {
                         Text("update")

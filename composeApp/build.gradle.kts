@@ -19,6 +19,7 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.kotlin.ksp)
     alias(libs.plugins.kotlin.kapt)
+    alias(libs.plugins.kotlinx.atomicfu)
 }
 
 kotlin {
@@ -73,6 +74,7 @@ kotlin {
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.runtime.livedata)
             implementation(libs.androidx.recyclerview)
+            implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
 //            implementation(libs.androidx.constraintlayout)
 //            implementation(libs.androidx.constraintlayout.compose)
@@ -88,14 +90,15 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.kotlinx.datetime)
+            implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.constraintlayout.compose.multiplatform)
+            implementation(libs.kotlinx.atomicfu)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+            implementation(libs.androidx.lifecycle.viewmodel.compose)
         }
     }
 }

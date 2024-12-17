@@ -9,4 +9,5 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlin.ksp) apply false
     alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.kotlinx.atomicfu) apply false
 }
