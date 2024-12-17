@@ -2,17 +2,17 @@ package compose.project.demo.common.base.bean
 
 import kotlin.reflect.KClass
 
-open class MapProperties(
-    private val map: MutableMap<String, Any?> = mutableMapOf(),
-) : BaseProperties<Any>() {
+open class MapProperties<T>(
+    private val map: MutableMap<String, T?> = mutableMapOf(),
+) : BaseProperties<T>() {
 
-    fun asMap(): Map<String, Any?> = map
+    fun asMap(): Map<String, T?> = map
 
-    override fun getValue(type: KClass<*>, k: String): Any? {
+    override fun getValue(type: KClass<*>, k: String): T? {
         return map[k]
     }
 
-    override fun setValue(type: KClass<*>, k: String, v: Any?) {
+    override fun setValue(type: KClass<*>, k: String, v: T?) {
         if (v === null) {
             map -= k
             return

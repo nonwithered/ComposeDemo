@@ -26,7 +26,7 @@ open class BundleProperties(
             Char::class -> bundle.getChar(k)
             String::class -> bundle.getString(k)
             else -> when {
-                type.isSubclassOf(Serializable::class) -> bundle.getSerializable(k, type.java as Class<out Serializable>)
+                type.isSubclassOf(Serializable::class) -> @Suppress("UNCHECKED_CAST") bundle.getSerializable(k, type.java as Class<out Serializable>)
                 type.isSubclassOf(Bundle::class) -> bundle.getBundle(k)
                 else -> throw ClassCastException("$k $type")
             }
