@@ -6,7 +6,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
 import kotlinx.atomicfu.atomic
-import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -94,7 +93,6 @@ private class MutableStateFlowVolatileImpl<T>(
         return data.tryEmit(nextVersion to value)
     }
 
-    @ExperimentalCoroutinesApi
     override fun resetReplayCache() {
         data.resetReplayCache()
     }
@@ -112,13 +110,14 @@ fun <T> StateFlow<T>.collectAsStateVolatile(
 ): State<T> {
     val versionAtomic = atomic(0)
     var version by versionAtomic
-    return produceState(version to value, this, context) {
+    val state = produceState(version to value, this, context) {
         if (context == EmptyCoroutineContext) {
             collect { value = ++version to it }
         } else withContext(context) {
             collect { value = ++version to it }
         }
-    }.map { it.second }
+    }
+    return state.map { it.second }
 }
 
 @Composable
