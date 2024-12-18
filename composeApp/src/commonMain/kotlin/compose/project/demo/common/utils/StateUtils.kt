@@ -5,7 +5,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.produceState
-import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.flow.FlowCollector
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -108,8 +107,7 @@ private class MutableStateFlowVolatileImpl<T>(
 fun <T> StateFlow<T>.collectAsStateVolatile(
     context: CoroutineContext = EmptyCoroutineContext,
 ): State<T> {
-    val versionAtomic = atomic(0)
-    var version by versionAtomic
+    var version by AtomicIntWrapper(0)
     val state = produceState(version to value, this, context) {
         if (context == EmptyCoroutineContext) {
             collect { value = ++version to it }
