@@ -2,12 +2,13 @@ package compose.project.demo.android.base.bean
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.os.Parcelable
 import compose.project.demo.common.base.bean.BaseProperties
 import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-open class BundleProperties(
+abstract class BundleProperties(
     private val bundle: Bundle = Bundle(),
 ) : BaseProperties<Any>() {
 
@@ -15,20 +16,23 @@ open class BundleProperties(
 
     @SuppressLint("NewApi")
     override fun getValue(type: KClass<*>, k: String): Any? {
-        return when (type) {
-            Boolean::class -> bundle.getBoolean(k)
-            Int::class -> bundle.getInt(k)
-            Long::class -> bundle.getLong(k)
-            Short::class -> bundle.getShort(k)
-            Byte::class -> bundle.getByte(k)
-            Float::class -> bundle.getFloat(k)
-            Double::class -> bundle.getDouble(k)
-            Char::class -> bundle.getChar(k)
-            String::class -> bundle.getString(k)
-            else -> when {
-                type.isSubclassOf(Serializable::class) -> @Suppress("UNCHECKED_CAST") bundle.getSerializable(k, type.java as Class<out Serializable>)
-                type.isSubclassOf(Bundle::class) -> bundle.getBundle(k)
-                else -> throw ClassCastException("$k $type")
+        return bundle.run {
+            when (type) {
+                Boolean::class -> getBoolean(k)
+                Int::class -> getInt(k)
+                Long::class -> getLong(k)
+                Short::class -> getShort(k)
+                Byte::class -> getByte(k)
+                Float::class -> getFloat(k)
+                Double::class -> getDouble(k)
+                Char::class -> getChar(k)
+                String::class -> getString(k)
+                else -> when {
+                    type.isSubclassOf(Bundle::class) -> getBundle(k)
+                    type.isSubclassOf(Serializable::class) -> @Suppress("UNCHECKED_CAST") getSerializable(k, type.java as Class<out Serializable>)
+                    type.isSubclassOf(Parcelable::class) -> @Suppress("UNCHECKED_CAST") getParcelable(k, type.java as Class<out Parcelable>)
+                    else -> throw ClassCastException("$k $type")
+                }
             }
         }
     }

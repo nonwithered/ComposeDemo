@@ -2,7 +2,7 @@ package compose.project.demo.common.base.bean
 
 import kotlin.reflect.KClass
 
-open class MapProperties<T>(
+abstract class MapProperties<T>(
     private val map: MutableMap<String, T?> = mutableMapOf(),
 ) : BaseProperties<T>() {
 
