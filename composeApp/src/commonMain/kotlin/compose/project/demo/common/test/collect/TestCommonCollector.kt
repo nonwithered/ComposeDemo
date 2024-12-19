@@ -16,5 +16,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon009List.asCaseItem,
         TestCommon010Grid.asCaseItem,
         TestCommon011Staggered.asCaseItem,
+        TestCommon012Canvas.asCaseItem,
     )
 }
