@@ -3,10 +3,18 @@ package compose.project.demo.common.test
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.Button
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.drawWithCache
@@ -26,6 +34,8 @@ import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
+import compose.project.demo.common.test.collect.TestCase.Companion.TAG
+import compose.project.demo.common.utils.logD
 
 object TestCommon012Canvas : TestCase<TestCommon012Canvas> {
 
@@ -190,51 +200,141 @@ object TestCommon012Canvas : TestCase<TestCommon012Canvas> {
 
     @Composable
     private fun TestDrawBehind() {
-        Box(
-            modifier = Modifier.fillMaxSize().drawBehind {
-                testDrawRect()
-            }
+        var update by remember {
+            mutableStateOf(0)
+        }
+        TAG.logD { "TestDrawBehind $update" }
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            TestDrawLine()
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { update += 1 },
+            ) {
+                Text(
+                    text = "TestDrawBehind",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Red,
+                    fontSize = 24.sp,
+                )
+            }
+            TAG.logD { "TestDrawBehind $update outer" }
+            Box(
+                modifier = Modifier.fillMaxSize().drawBehind {
+                    TAG.logD { "TestDrawBehind drawBehind" }
+                    testDrawRect()
+                }
+            ) {
+                TAG.logD { "TestDrawBehind $update inner" }
+                TestDrawLine()
+            }
         }
     }
 
     @Composable
     private fun TestDrawWithContent() {
-        Box(
-            modifier = Modifier.fillMaxSize().drawWithContent {
-                drawContent()
-                testDrawLine()
-            }
+        var update by remember {
+            mutableStateOf(0)
+        }
+        TAG.logD { "TestDrawWithContent $update" }
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            TestDrawRect()
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { update += 1 },
+            ) {
+                Text(
+                    text = "TestDrawWithContent",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Red,
+                    fontSize = 24.sp,
+                )
+            }
+            TAG.logD { "TestDrawWithContent $update outer" }
+            Box(
+                modifier = Modifier.fillMaxSize().drawWithContent {
+                    TAG.logD { "TestDrawWithContent drawWithContent" }
+                    drawContent()
+                    testDrawLine()
+                }
+            ) {
+                TAG.logD { "TestDrawWithContent $update inner" }
+                TestDrawRect()
+            }
         }
     }
 
     @Composable
     private fun TestDrawWithCacheBehind() {
-        Box(
-            modifier = Modifier.fillMaxSize().drawWithCache {
-                onDrawBehind {
-                    testDrawRect()
-                }
-            }
+        var update by remember {
+            mutableStateOf(0)
+        }
+        TAG.logD { "TestDrawWithCacheBehind $update" }
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            TestDrawLine()
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { update += 1 },
+            ) {
+                Text(
+                    text = "TestDrawWithCacheBehind",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Red,
+                    fontSize = 24.sp,
+                )
+            }
+            TAG.logD { "TestDrawWithCacheBehind $update outer" }
+            Box(
+                modifier = Modifier.fillMaxSize().drawWithCache {
+                    TAG.logD { "TestDrawWithCacheBehind drawWithCache" }
+                    onDrawBehind {
+                        TAG.logD { "TestDrawWithCacheBehind drawWithCache onDrawBehind" }
+                        testDrawRect()
+                    }
+                }
+            ) {
+                TAG.logD { "TestDrawWithCacheBehind $update inner" }
+                TestDrawLine()
+            }
         }
     }
 
     @Composable
     private fun TestDrawWithCacheWithContent() {
-        Box(
-            modifier = Modifier.fillMaxSize().drawWithCache {
-                onDrawWithContent {
-                    drawContent()
-                    testDrawLine()
-                }
-            }
+        var update by remember {
+            mutableStateOf(0)
+        }
+        TAG.logD { "TestDrawWithCacheWithContent $update" }
+        Column(
+            modifier = Modifier.fillMaxSize(),
         ) {
-            TestDrawRect()
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { update += 1 },
+            ) {
+                Text(
+                    text = "TestDrawWithCacheWithContent",
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Red,
+                    fontSize = 24.sp,
+                )
+            }
+            TAG.logD { "TestDrawWithCacheWithContent $update outer" }
+            Box(
+                modifier = Modifier.fillMaxSize().drawWithCache {
+                    TAG.logD { "TestDrawWithCacheWithContent drawWithCache" }
+                    onDrawWithContent {
+                        TAG.logD { "TestDrawWithCacheWithContent drawWithCache onDrawWithContent" }
+                        drawContent()
+                        testDrawLine()
+                    }
+                }
+            ) {
+                TAG.logD { "TestDrawWithCacheWithContent $update inner" }
+                TestDrawRect()
+            }
         }
     }
 }
