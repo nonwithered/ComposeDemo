@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
 import compose.project.demo.common.utils.logD
+import compose.project.demo.common.utils.rememberWithObserver
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 
@@ -58,12 +59,14 @@ object TestCommon013Effect : TestCase<TestCommon013Effect> {
 
     @Composable
     private fun TestLaunchedEffect(page: Int) {
-        var state by remember {
+        var cacheState by remember {
             mutableStateOf(0)
         }
-        val value = state
+        val value = cacheState
         TAG.logD { "TestLaunchedEffect $page $value" }
-        remember(value) { MyTestEffectImpl("$page $value 1") }
+        value.rememberWithObserver("$page $value 1") { it, state ->
+            TAG.logD { "$it $state" }
+        }
         TestSideEffectRecursion(page, false, value, value)
         SideEffect {
             TAG.logD { "TestLaunchedEffect $page SideEffect $value" }
@@ -88,7 +91,7 @@ object TestCommon013Effect : TestCase<TestCommon013Effect> {
         }
         Button(
             modifier = Modifier.fillMaxSize(),
-            onClick = { state = value + 1 },
+            onClick = { cacheState = value + 1 },
         ) {
             Text(
                 modifier = Modifier.fillMaxSize(),
@@ -99,9 +102,9 @@ object TestCommon013Effect : TestCase<TestCommon013Effect> {
             )
         }
         TestSideEffectRecursion(page, true, value, value)
-        val effect = MyTestEffectImpl("$page $value 2")
-        remember(value) { effect }
-        remember(value) { effect }
+        value.rememberWithObserver("$page $value 2") { it, state ->
+            TAG.logD { "$it $state" }
+        }
     }
 
     @Composable
@@ -114,22 +117,5 @@ object TestCommon013Effect : TestCase<TestCommon013Effect> {
         }
         TAG.logD { "TestSideEffectRecursion $page $re $count" }
         TestSideEffectRecursion(page, re, initCount, if (re) count - 1 else count + 1)
-    }
-
-    private class MyTestEffectImpl(
-        private val msg: String,
-    ) : RememberObserver {
-
-        override fun onRemembered() {
-            TAG.logD { "onRemembered $msg" }
-        }
-
-        override fun onForgotten() {
-            TAG.logD { "onForgotten $msg" }
-        }
-
-        override fun onAbandoned() {
-            TAG.logD { "onAbandoned $msg" }
-        }
     }
 }
