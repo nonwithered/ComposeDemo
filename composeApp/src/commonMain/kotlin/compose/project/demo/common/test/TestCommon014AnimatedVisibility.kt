@@ -3,6 +3,10 @@ package compose.project.demo.common.test
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
@@ -28,19 +32,25 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextMotion
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
@@ -140,21 +150,6 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
             var visible by remember {
                 mutableStateOf(true)
             }
-            Box(
-                modifier = Modifier.fillMaxWidth()
-                    .background(Color.Blue)
-                    .clickable {
-                        visible = !visible
-                    },
-            ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = label,
-                    color = Color.Red,
-                    fontSize = 30.sp,
-                    textAlign = TextAlign.Center,
-                )
-            }
             AnimatedVisibility(
                 visible = visible,
                 enter = enter,
@@ -170,11 +165,56 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                     TAG.logD { "$label $visible $state" }
                 }
             }
+            Box(
+                modifier = Modifier.fillMaxWidth()
+                    .background(Color.Blue)
+                    .animateContentSize(
+                        animationSpec = tween(
+                            durationMillis = 2000,
+                            easing = LinearEasing,
+                        ),
+                    )
+                    .height(if (visible) 100.dp else 200.dp)
+                    .clickable {
+                        visible = !visible
+                    },
+            ) {
+                val animatedScale by animateFloatAsState(
+                    animationSpec = tween(
+                        durationMillis = 2000,
+                        easing = LinearEasing,
+                    ),
+                    targetValue = if (visible) 1f else 2f,
+                    label = "text_scale",
+                )
+                Text(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .graphicsLayer {
+                            scaleX = animatedScale
+                        },
+                    text = label,
+                    color = Color.Red,
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                    style = LocalTextStyle.current.copy(textMotion = TextMotion.Animated),
+                )
+            }
+            val animatedAlpha by animateFloatAsState(
+                targetValue = if (!visible) 1.0f else 0f,
+                label = "alpha",
+                animationSpec = tween(
+                    durationMillis = 2000,
+                    easing = LinearEasing,
+                ),
+            )
             Image(
                 painter = painterResource(Res.drawable.compose_multiplatform),
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize().graphicsLayer {
+                    alpha = animatedAlpha
+                },
                 contentDescription = label,
-                contentScale = ContentScale.FillBounds
+                contentScale = ContentScale.FillBounds,
             )
         }
     }
