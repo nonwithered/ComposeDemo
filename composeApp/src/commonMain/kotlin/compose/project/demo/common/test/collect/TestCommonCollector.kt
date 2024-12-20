@@ -18,5 +18,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon011Staggered.asCaseItem,
         TestCommon012Canvas.asCaseItem,
         TestCommon013Effect.asCaseItem,
+        TestCommon014AnimatedVisibility.asCaseItem,
     )
 }
