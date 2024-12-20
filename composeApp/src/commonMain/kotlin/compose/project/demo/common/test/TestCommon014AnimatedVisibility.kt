@@ -62,7 +62,7 @@ import org.jetbrains.compose.resources.painterResource
 
 object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibility> {
 
-    private val list = listOf<@Composable () -> Unit>(
+    val list = listOf<@Composable () -> Unit>(
         {
             TestAnimatedVisibility(
                 "default",
