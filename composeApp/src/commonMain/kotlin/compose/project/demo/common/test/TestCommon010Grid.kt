@@ -123,7 +123,7 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
                     TAG.logD { "itemsIndexed span $id $name $style $maxLineSpan $maxCurrentLineSpan" }
                     GridItemSpan(when (style) { 0 -> { 1 } 1 -> { 2 } 2 -> { maxCurrentLineSpan } else -> { maxLineSpan } })
                 },
-//                key = { _, it -> it.id },
+                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
                 val id = it.id

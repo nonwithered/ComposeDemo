@@ -102,7 +102,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
         ) {
             itemsIndexed(
                 items = items,
-//                key = { _, it -> it.id },
+                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
                 val id = it.id

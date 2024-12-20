@@ -127,7 +127,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
                         StaggeredGridItemSpan.SingleLane
                     }
                 },
-//                key = { _, it -> it.id },
+                key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->
                 val id = it.id
