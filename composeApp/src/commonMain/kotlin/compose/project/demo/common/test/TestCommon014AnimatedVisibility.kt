@@ -4,9 +4,13 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.animation.expandHorizontally
 import androidx.compose.animation.expandIn
 import androidx.compose.animation.expandVertically
@@ -25,10 +29,12 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,6 +44,7 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -58,6 +65,7 @@ import compose.project.demo.common.utils.logD
 import compose.project.demo.common.utils.rememberAsObserver
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 
 object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibility> {
@@ -200,22 +208,115 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                     style = LocalTextStyle.current.copy(textMotion = TextMotion.Animated),
                 )
             }
-            val animatedAlpha by animateFloatAsState(
-                targetValue = if (!visible) 1.0f else 0f,
-                label = "alpha",
-                animationSpec = tween(
-                    durationMillis = 2000,
-                    easing = LinearEasing,
-                ),
-            )
-            Image(
-                painter = painterResource(Res.drawable.compose_multiplatform),
-                modifier = Modifier.fillMaxSize().graphicsLayer {
-                    alpha = animatedAlpha
-                },
-                contentDescription = label,
-                contentScale = ContentScale.FillBounds,
-            )
+            Row(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                val animatedAlpha by animateFloatAsState(
+                    targetValue = if (!visible) 1.0f else 0f,
+                    label = "alpha",
+                    animationSpec = tween(
+                        durationMillis = 2000,
+                        easing = LinearEasing,
+                    ),
+                )
+
+                var transitionState by remember { mutableStateOf(false) }
+
+                run {
+                    val transition = updateTransition(transitionState)
+                    val borderWidth by transition.animateDp(
+                        transitionSpec = {
+                            tween(
+                                durationMillis = 2000,
+                                easing = LinearEasing,
+                            )
+                        },
+                    ) { state ->
+                        if (state) {
+                            0.dp
+                        } else {
+                            10.dp
+                        }
+                    }
+                    val scaleValue by transition.animateFloat(
+                        transitionSpec = {
+                            tween(
+                                durationMillis = 2000,
+                                easing = LinearEasing,
+                            )
+                        },
+                    ) { state ->
+                        if (state) {
+                            1f
+                        } else {
+                            0.5f
+                        }
+                    }
+                    Image(
+                        painter = painterResource(Res.drawable.compose_multiplatform),
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth(0.5f)
+                            .border(borderWidth, Color.Red)
+                            .clickable {
+                                transitionState = !transitionState
+                            }
+                            .graphicsLayer {
+                                alpha = animatedAlpha
+                                scaleX = scaleValue
+                                scaleY = scaleValue
+                            },
+                        contentDescription = label,
+                        contentScale = ContentScale.FillBounds,
+                    )
+                }
+
+                run {
+                    val scaleAnimation = remember { Animatable(0.5f) }
+                    val borderAnimation = remember { Animatable(10f) }
+                    LaunchedEffect(transitionState) {
+                        launch {
+                            scaleAnimation.animateTo(
+                                targetValue = if (transitionState) {
+                                    1f
+                                } else {
+                                    0.5f
+                                },
+                                animationSpec = tween(
+                                    durationMillis = 2000,
+                                    easing = LinearEasing,
+                                ),
+                            )
+                        }
+                        launch {
+                            borderAnimation.animateTo(
+                                targetValue = if (transitionState) {
+                                    0f
+                                } else {
+                                    10f
+                                },
+                                animationSpec = tween(
+                                    durationMillis = 2000,
+                                    easing = LinearEasing,
+                                ),
+                            )
+                        }
+                    }
+                    Image(
+                        painter = painterResource(Res.drawable.compose_multiplatform),
+                        modifier = Modifier.fillMaxHeight().fillMaxWidth()
+                            .border(borderAnimation.value.dp, Color.Red)
+                            .clickable {
+                                transitionState = !transitionState
+                            }
+                            .graphicsLayer {
+                                alpha = animatedAlpha
+                                scaleX = scaleAnimation.value
+                                scaleY = scaleAnimation.value
+                            },
+                        contentDescription = label,
+                        contentScale = ContentScale.FillBounds,
+                    )
+                }
+            }
         }
     }
 }
