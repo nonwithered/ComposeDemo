@@ -71,6 +71,7 @@ kotlin {
             implementation(libs.auto.service)
             implementation(libs.androidx.activity.compose)
             implementation(libs.androidx.recyclerview)
+            implementation(libs.androidx.coordinatorlayout)
             implementation(libs.androidx.appcompat)
             implementation(libs.androidx.runtime.livedata)
             implementation(libs.androidx.recyclerview)
