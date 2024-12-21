@@ -30,7 +30,9 @@ import compose.project.demo.common.test.collect.TestCase
 @OptIn(ExperimentalSharedTransitionApi::class)
 object TestCommon017SharedBounds : TestCase<TestCommon017SharedBounds> {
 
-    val list = listOf<@Composable (sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.() -> Unit) -> Unit)?) -> Unit>(
+    val list = listOf<@Composable (sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.(
+        (() -> AnimatedVisibilityScope)?,
+    ) -> Unit) -> Unit)?) -> Unit>(
         { TestResize("RemeasureToBounds skipToLookaheadSize", RemeasureToBounds, { it.skipToLookaheadSize() }, it) },
         { TestResize("ScaleToBounds skipToLookaheadSize", ScaleToBounds(), { it.skipToLookaheadSize() }, it) },
         { TestResize("RemeasureToBounds", RemeasureToBounds, { it }, it) },
@@ -57,7 +59,9 @@ object TestCommon017SharedBounds : TestCase<TestCommon017SharedBounds> {
         label: String,
         resizeMode: ResizeMode,
         textSkipToLookaheadSize: SharedTransitionScope.(Modifier) -> Modifier,
-        sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.() -> Unit) -> Unit)? = null,
+        sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.(
+            (() -> AnimatedVisibilityScope)?,
+        ) -> Unit) -> Unit)? = null,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),

@@ -65,7 +65,9 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
 
     @Composable
     fun TestSharedContent(
-        sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.() -> Unit) -> Unit)? = null,
+        sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.(
+            (() -> AnimatedVisibilityScope)?,
+        ) -> Unit) -> Unit)? = null,
         modifierFactory: @Composable SharedTransitionScope.(
             animatedVisibilityScope: AnimatedVisibilityScope,
             page: Int,
@@ -78,10 +80,10 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
         }
         val scope = sharedTransitionScope ?: {
             SharedTransitionLayout {
-                it()
+                it(null)
             }
         }
-        scope {
+        scope { animatedVisibilityScopeInjector ->
             AnimatedContent(
                 targetState = pageState,
                 modifier = Modifier.fillMaxSize(),
@@ -127,7 +129,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
                     val textShared = rememberSharedContentState(key = "text")
                     val imageShared = rememberSharedContentState(key = "image")
                     val (textElement, imageElement) = modifierFactory(
-                        this@AnimatedContent,
+                        animatedVisibilityScopeInjector?.invoke() ?: this@AnimatedContent,
                         page,
                         textShared,
                         imageShared,

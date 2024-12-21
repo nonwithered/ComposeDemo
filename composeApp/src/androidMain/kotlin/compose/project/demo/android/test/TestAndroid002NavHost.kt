@@ -1,15 +1,14 @@
 package compose.project.demo.android.test
 
 
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.LocalTextStyle
@@ -21,7 +20,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -71,22 +69,26 @@ object TestAndroid002NavHost : TestCase<TestAndroid002NavHost> {
             SharedTransitionLayout {
                 val sharedTransitionLayout = this@SharedTransitionLayout
                 val list = remember(sharedTransitionLayout) {
-                    val sharedTransitionScope: @Composable (@Composable SharedTransitionScope.() -> Unit) -> Unit = { block ->
-                        sharedTransitionLayout.block()
-                    }
-                    TestCommon017SharedBounds.list.map {
-                        val r: @Composable () -> Unit = { it(sharedTransitionScope) }
-                        r
+                    TestCommon017SharedBounds.list.map { rawF: @Composable (sharedTransitionScope: @Composable ((@Composable SharedTransitionScope.((() -> AnimatedVisibilityScope)?) -> Unit) -> Unit)?) -> Unit ->
+                        val q: @Composable (AnimatedVisibilityScope) -> Unit = { c ->
+                            val cF: () -> AnimatedVisibilityScope = {
+                                c
+                            }
+                            rawF { aF ->
+                                aF(cF)
+                            }
+                        }
+                        q
                     }
                 }
                 NavHost(
                     navController = navController,
                     startDestination = "0"
                 ) {
-                    repeat(list.size) {
+                    repeat(TestCommon017SharedBounds.list.size) {
                         val content = list[it]
                         composable(it.toString()) {
-                            content()
+                            content(this@composable)
                         }
                     }
                 }
