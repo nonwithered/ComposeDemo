@@ -3,6 +3,7 @@ package compose.project.demo.common.test
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
@@ -39,6 +40,11 @@ object TestCommon015AnimatedContent : TestCase<TestCommon015AnimatedContent> {
 
     private val list = listOf<@Composable () -> Unit>(
     ) + TestCommon014AnimatedVisibility.list
+
+    private fun <T> animSpec(): FiniteAnimationSpec<T> = tween(
+        durationMillis = 2000,
+        easing = LinearEasing,
+    )
 
     @Composable
     override fun BoxScope.Content() {
@@ -88,46 +94,31 @@ object TestCommon015AnimatedContent : TestCase<TestCommon015AnimatedContent> {
                 transitionSpec = {
                     if ((initialState + 1) % list.size == targetState % list.size) {
                         slideInHorizontally(
-                            animationSpec = tween(
-                                durationMillis = 3000,
-                                easing = LinearEasing,
-                            ),
+                            animationSpec = animSpec(),
                             initialOffsetX = { fullWidth ->
                                 fullWidth
                             },
                         ) togetherWith slideOutHorizontally(
-                            animationSpec = tween(
-                                durationMillis = 3000,
-                                easing = LinearEasing,
-                            ),
+                            animationSpec = animSpec(),
                             targetOffsetX = { fullWidth ->
                                 -fullWidth
                             },
                         )
                     } else {
                         slideInHorizontally(
-                            animationSpec = tween(
-                                durationMillis = 3000,
-                                easing = LinearEasing,
-                            ),
+                            animationSpec = animSpec(),
                             initialOffsetX = { fullWidth ->
                                 -fullWidth
                             },
                         ) togetherWith slideOutHorizontally(
-                            animationSpec = tween(
-                                durationMillis = 3000,
-                                easing = LinearEasing,
-                            ),
+                            animationSpec = animSpec(),
                             targetOffsetX = { fullWidth ->
                                 fullWidth
                             },
                         )
                     } using SizeTransform(
                         sizeAnimationSpec = { initialSize, targetSize ->
-                            tween(
-                                durationMillis = 3000,
-                                easing = LinearEasing,
-                            )
+                            animSpec()
                         }
                     )
                 },
@@ -140,35 +131,23 @@ object TestCommon015AnimatedContent : TestCase<TestCommon015AnimatedContent> {
                         launch {
                             alphaAnimation.animateTo(
                                 targetValue = 1f,
-                                animationSpec = tween(
-                                    durationMillis = 3000,
-                                    easing = LinearEasing,
-                                ),
+                                animationSpec = animSpec(),
                             )
                         }
                         launch {
                             borderAnimation.animateTo(
                                 targetValue = 1f,
-                                animationSpec = tween(
-                                    durationMillis = 3000,
-                                    easing = LinearEasing,
-                                ),
+                                animationSpec = animSpec(),
                             )
                         }
                     }
                     borderAnimation.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(
-                            durationMillis = 3000,
-                            easing = LinearEasing,
-                        ),
+                        animationSpec = animSpec(),
                     )
                     alphaAnimation.animateTo(
                         targetValue = 0f,
-                        animationSpec = tween(
-                            durationMillis = 3000,
-                            easing = LinearEasing,
-                        ),
+                        animationSpec = animSpec(),
                     )
                 }
                 Box(

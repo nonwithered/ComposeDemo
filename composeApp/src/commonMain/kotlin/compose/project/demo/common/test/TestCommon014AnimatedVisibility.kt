@@ -5,6 +5,7 @@ import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.animateFloat
@@ -136,6 +137,11 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
         },
     )
 
+    private fun <T> animSpec(): FiniteAnimationSpec<T> = tween(
+        durationMillis = 2000,
+        easing = LinearEasing,
+    )
+
     @Composable
     override fun BoxScope.Content() {
         HorizontalPager(
@@ -177,10 +183,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                 modifier = Modifier.fillMaxWidth()
                     .background(Color.Blue)
                     .animateContentSize(
-                        animationSpec = tween(
-                            durationMillis = 2000,
-                            easing = LinearEasing,
-                        ),
+                        animationSpec = animSpec(),
                     )
                     .height(if (visible) 100.dp else 200.dp)
                     .clickable {
@@ -188,10 +191,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                     },
             ) {
                 val animatedScale by animateFloatAsState(
-                    animationSpec = tween(
-                        durationMillis = 2000,
-                        easing = LinearEasing,
-                    ),
+                    animationSpec = animSpec(),
                     targetValue = if (visible) 1f else 2f,
                     label = "text_scale",
                 )
@@ -214,10 +214,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                 val animatedAlpha by animateFloatAsState(
                     targetValue = if (!visible) 1.0f else 0f,
                     label = "alpha",
-                    animationSpec = tween(
-                        durationMillis = 2000,
-                        easing = LinearEasing,
-                    ),
+                    animationSpec = animSpec(),
                 )
 
                 var transitionState by remember { mutableStateOf(false) }
@@ -226,10 +223,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                     val transition = updateTransition(transitionState)
                     val borderWidth by transition.animateDp(
                         transitionSpec = {
-                            tween(
-                                durationMillis = 2000,
-                                easing = LinearEasing,
-                            )
+                            animSpec()
                         },
                     ) { state ->
                         if (state) {
@@ -240,10 +234,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                     }
                     val scaleValue by transition.animateFloat(
                         transitionSpec = {
-                            tween(
-                                durationMillis = 2000,
-                                easing = LinearEasing,
-                            )
+                            animSpec()
                         },
                     ) { state ->
                         if (state) {
@@ -280,10 +271,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                                 } else {
                                     0.5f
                                 },
-                                animationSpec = tween(
-                                    durationMillis = 2000,
-                                    easing = LinearEasing,
-                                ),
+                                animationSpec = animSpec(),
                             )
                         }
                         launch {
@@ -293,10 +281,7 @@ object TestCommon014AnimatedVisibility : TestCase<TestCommon014AnimatedVisibilit
                                 } else {
                                     10f
                                 },
-                                animationSpec = tween(
-                                    durationMillis = 2000,
-                                    easing = LinearEasing,
-                                ),
+                                animationSpec = animSpec(),
                             )
                         }
                     }
