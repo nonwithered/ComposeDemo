@@ -1,9 +1,11 @@
 package compose.project.demo.common.test
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.SharedTransitionScope.SharedContentState
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.FiniteAnimationSpec
 import androidx.compose.animation.core.LinearEasing
@@ -56,6 +58,21 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
 
     @Composable
     override fun BoxScope.Content() {
+        TestSharedContent { animatedVisibilityScope, page, textShared, imageShared ->
+            SharedModifier(animatedVisibilityScope, page, textShared, imageShared)
+        }
+    }
+
+    @Composable
+    fun TestSharedContent(
+        modifierFactory: @Composable SharedTransitionScope.(
+            animatedVisibilityScope: AnimatedVisibilityScope,
+            page: Int,
+            textShared: SharedContentState,
+            imageShared: SharedContentState,
+        ) -> Pair<Modifier.() -> Modifier, Modifier.() -> Modifier>
+    ) {
+
         var pageState by remember {
             mutableStateOf(0)
         }
@@ -107,30 +124,47 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
                 ) {
                     val textShared = rememberSharedContentState(key = "text")
                     val imageShared = rememberSharedContentState(key = "image")
+                    val (textElement, imageElement) = modifierFactory(
+                        this@AnimatedContent,
+                        page,
+                        textShared,
+                        imageShared,
+                    )
                     list[page](
-                        {
-                            sharedElement(
-                                textShared,
-                                animatedVisibilityScope = this@AnimatedContent,
-                                placeHolderSize = if (page == 0) SharedTransitionScope.PlaceHolderSize.contentSize else SharedTransitionScope.PlaceHolderSize.animatedSize,
-                                boundsTransform = { _, _ ->
-                                    animSpec(if (page == 0) 1000 else 4000)
-                                },
-                            )
-                        },
-                        {
-                            sharedElement(
-                                imageShared,
-                                animatedVisibilityScope = this@AnimatedContent,
-                                placeHolderSize = if (page == 0) SharedTransitionScope.PlaceHolderSize.contentSize else SharedTransitionScope.PlaceHolderSize.animatedSize,
-                                boundsTransform = { _, _ ->
-                                    animSpec(if (page == 0) 4000 else 1000)
-                                },
-                            )
-                        },
+                        textElement,
+                        imageElement,
                     )
                 }
             }
+        }
+    }
+
+    @Composable
+    fun SharedTransitionScope.SharedModifier(
+        animatedVisibilityScope: AnimatedVisibilityScope,
+        page: Int,
+        textShared: SharedContentState,
+        imageShared: SharedContentState,
+    ): Pair<Modifier.() -> Modifier, Modifier.() -> Modifier> {
+        return { modifier: Modifier ->
+            modifier.sharedElement(
+                textShared,
+                animatedVisibilityScope = animatedVisibilityScope,
+                placeHolderSize = if (page == 0) SharedTransitionScope.PlaceHolderSize.contentSize else SharedTransitionScope.PlaceHolderSize.animatedSize,
+                boundsTransform = { _, _ ->
+                    animSpec(if (page == 0) 1000 else 4000)
+                },
+            )
+        } to
+        { modifier: Modifier ->
+            modifier.sharedElement(
+                imageShared,
+                animatedVisibilityScope = animatedVisibilityScope,
+                placeHolderSize = if (page == 0) SharedTransitionScope.PlaceHolderSize.contentSize else SharedTransitionScope.PlaceHolderSize.animatedSize,
+                boundsTransform = { _, _ ->
+                    animSpec(if (page == 0) 4000 else 1000)
+                },
+            )
         }
     }
 
