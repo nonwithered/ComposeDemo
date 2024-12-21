@@ -115,7 +115,6 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
             ) { page ->
                 Box(
                     modifier = Modifier
-                        .fillMaxSize()
                         .clickable {
                             pageState = (pageState + 1) % list.size
                         }
@@ -173,7 +172,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
         imageModifier: Modifier.() -> Modifier,
     ) {
         Column (
-            modifier = Modifier.fillMaxSize(0.5f).background(Color.Red).align(Alignment.BottomEnd),
+            modifier = Modifier.fillMaxWidth(0.5f).align(Alignment.BottomCenter).background(Color.Magenta),
         ) {
             Image(
                 modifier = Modifier.size(80.dp),
@@ -191,7 +190,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
                 fontSize = 30.sp,
             )
             Image(
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.fillMaxWidth()
                     .background(Color.LightGray)
                     .imageModifier(),
                 painter = painterResource(Res.drawable.compose_multiplatform),
@@ -206,8 +205,8 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
         textModifier: Modifier.() -> Modifier,
         imageModifier: Modifier.() -> Modifier,
     ) {
-        Column (
-            modifier = Modifier.fillMaxSize().background(Color.Green),
+        Column(
+            modifier = Modifier.background(Color.Magenta),
         ) {
             Image(
                 modifier = Modifier.fillMaxSize(0.5f).align(Alignment.Start)
