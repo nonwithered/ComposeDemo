@@ -42,7 +42,7 @@ import composedemo.composeapp.generated.resources.thumbs_up_svgrepo_com
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalSharedTransitionApi::class)
-object TestCommon016SharedTransitionLayout : TestCase<TestCommon016SharedTransitionLayout> {
+object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
 
     private val list = listOf<@Composable BoxScope.(Modifier.() -> Modifier, Modifier.() -> Modifier) -> Unit>(
         { a, b -> OuterPage(a, b) },

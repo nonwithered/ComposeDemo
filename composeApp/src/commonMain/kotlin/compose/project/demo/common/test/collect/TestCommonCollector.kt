@@ -20,6 +20,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon013Effect.asCaseItem,
         TestCommon014AnimatedVisibility.asCaseItem,
         TestCommon015AnimatedContent.asCaseItem,
-        TestCommon016SharedTransitionLayout.asCaseItem,
+        TestCommon016SharedElement.asCaseItem,
     )
 }
