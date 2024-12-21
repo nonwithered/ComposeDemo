@@ -77,6 +77,7 @@ kotlin {
             implementation(libs.androidx.recyclerview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.androidx.navigation.compose)
 //            implementation(libs.androidx.constraintlayout)
 //            implementation(libs.androidx.constraintlayout.compose)
 //            kapt(libs.auto.service)

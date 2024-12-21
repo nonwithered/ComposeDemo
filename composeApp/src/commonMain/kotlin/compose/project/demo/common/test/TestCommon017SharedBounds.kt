@@ -30,11 +30,11 @@ import compose.project.demo.common.test.collect.TestCase
 @OptIn(ExperimentalSharedTransitionApi::class)
 object TestCommon017SharedBounds : TestCase<TestCommon017SharedBounds> {
 
-    val list = listOf<@Composable () -> Unit>(
-        { TestResize("RemeasureToBounds skipToLookaheadSize", RemeasureToBounds, { it.skipToLookaheadSize() }) },
-        { TestResize("ScaleToBounds skipToLookaheadSize", ScaleToBounds(), { it.skipToLookaheadSize() }) },
-        { TestResize("RemeasureToBounds", RemeasureToBounds, { it }) },
-        { TestResize("ScaleToBounds", ScaleToBounds(), { it }) },
+    val list = listOf<@Composable (sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.() -> Unit) -> Unit)?) -> Unit>(
+        { TestResize("RemeasureToBounds skipToLookaheadSize", RemeasureToBounds, { it.skipToLookaheadSize() }, it) },
+        { TestResize("ScaleToBounds skipToLookaheadSize", ScaleToBounds(), { it.skipToLookaheadSize() }, it) },
+        { TestResize("RemeasureToBounds", RemeasureToBounds, { it }, it) },
+        { TestResize("ScaleToBounds", ScaleToBounds(), { it }, it) },
     )
 
     private fun <T> animSpec(durationMillis: Int = 2000): FiniteAnimationSpec<T> = tween(
@@ -48,15 +48,16 @@ object TestCommon017SharedBounds : TestCase<TestCommon017SharedBounds> {
             modifier = Modifier.fillMaxSize(),
             state = rememberPagerState(pageCount = { list.size }),
         ) { page ->
-            list[page]()
+            list[page](null)
         }
     }
 
     @Composable
-    private fun TestResize(
+    fun TestResize(
         label: String,
         resizeMode: ResizeMode,
         textSkipToLookaheadSize: SharedTransitionScope.(Modifier) -> Modifier,
+        sharedTransitionScope: (@Composable (@Composable SharedTransitionScope.() -> Unit) -> Unit)? = null,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -68,7 +69,7 @@ object TestCommon017SharedBounds : TestCase<TestCommon017SharedBounds> {
                 color = Color.Red,
                 textAlign = TextAlign.Center,
             )
-            TestCommon016SharedElement.TestSharedContent { animatedVisibilityScope, page, textShared, imageShared ->
+            TestCommon016SharedElement.TestSharedContent(sharedTransitionScope) { animatedVisibilityScope, page, textShared, imageShared ->
                 SharedModifier(animatedVisibilityScope, page, textShared, imageShared, resizeMode, textSkipToLookaheadSize)
             }
         }
