@@ -72,7 +72,6 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
             imageShared: SharedContentState,
         ) -> Pair<Modifier.() -> Modifier, Modifier.() -> Modifier>
     ) {
-
         var pageState by remember {
             mutableStateOf(0)
         }
@@ -140,7 +139,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
     }
 
     @Composable
-    fun SharedTransitionScope.SharedModifier(
+    private fun SharedTransitionScope.SharedModifier(
         animatedVisibilityScope: AnimatedVisibilityScope,
         page: Int,
         textShared: SharedContentState,
@@ -148,7 +147,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
     ): Pair<Modifier.() -> Modifier, Modifier.() -> Modifier> {
         return { modifier: Modifier ->
             modifier.sharedElement(
-                textShared,
+                state = textShared,
                 animatedVisibilityScope = animatedVisibilityScope,
                 placeHolderSize = if (page == 0) SharedTransitionScope.PlaceHolderSize.contentSize else SharedTransitionScope.PlaceHolderSize.animatedSize,
                 boundsTransform = { _, _ ->
@@ -158,7 +157,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
         } to
         { modifier: Modifier ->
             modifier.sharedElement(
-                imageShared,
+                state = imageShared,
                 animatedVisibilityScope = animatedVisibilityScope,
                 placeHolderSize = if (page == 0) SharedTransitionScope.PlaceHolderSize.contentSize else SharedTransitionScope.PlaceHolderSize.animatedSize,
                 boundsTransform = { _, _ ->
@@ -203,11 +202,10 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
     }
 
     @Composable
-    private fun BoxScope.InnerPage(
+    private fun InnerPage(
         textModifier: Modifier.() -> Modifier,
         imageModifier: Modifier.() -> Modifier,
     ) {
-
         Column (
             modifier = Modifier.fillMaxSize().background(Color.Green),
         ) {

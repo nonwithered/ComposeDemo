@@ -21,5 +21,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon014AnimatedVisibility.asCaseItem,
         TestCommon015AnimatedContent.asCaseItem,
         TestCommon016SharedElement.asCaseItem,
+        TestCommon017SharedBounds.asCaseItem,
     )
 }
