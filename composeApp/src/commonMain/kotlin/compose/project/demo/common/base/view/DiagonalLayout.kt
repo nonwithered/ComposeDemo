@@ -11,20 +11,21 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
-import androidx.compose.ui.layout.Measured
 import androidx.compose.ui.layout.Placeable
-import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
-import androidx.compose.ui.platform.InspectorInfo
-import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
+import compose.project.demo.common.utils.BaseModifierNodeElement
+import compose.project.demo.common.utils.BaseParentData
+import compose.project.demo.common.utils.ParentDataConverter
+import compose.project.demo.common.utils.ParentDataHolder
 import compose.project.demo.common.utils.coerceAtLeast
 import compose.project.demo.common.utils.horizontalBias
 import compose.project.demo.common.utils.intOffset
 import compose.project.demo.common.utils.intSize
+import compose.project.demo.common.utils.measure
 import compose.project.demo.common.utils.minSize
 import compose.project.demo.common.utils.plus
 import compose.project.demo.common.utils.size
@@ -67,6 +68,52 @@ private object DiagonalLayoutScopeInstance : DiagonalLayoutScope {
     )
 }
 
+private class DiagonalLayoutElement(
+    private val placeFractionHorizontal: Float,
+    private val placeFractionVertical: Float,
+) : BaseModifierNodeElement<DiagonalLayoutNode, DiagonalLayoutParentData>(
+    type = DiagonalLayoutElement::class,
+) {
+    override fun createParentData() = DiagonalLayoutParentData.pageDateConverter.createDefault().also {
+        it.placeFractionHorizontal = placeFractionHorizontal
+        it.placeFractionVertical = placeFractionVertical
+    }
+
+    override fun create() = DiagonalLayoutNode(createParentData())
+}
+
+private class DiagonalLayoutNode(
+    override val parentData: DiagonalLayoutParentData,
+) : Modifier.Node(), ParentDataModifierNode, ParentDataHolder<DiagonalLayoutParentData> {
+
+    override fun Density.modifyParentData(parentData: Any?): DiagonalLayoutParentData {
+        return DiagonalLayoutParentData.pageDateConverter.cast(parentData).also {
+            it.update(this@DiagonalLayoutNode.parentData)
+        }
+    }
+}
+
+private data class DiagonalLayoutParentData private constructor(
+    var placeFractionHorizontal: Float,
+    var placeFractionVertical: Float,
+) : BaseParentData<DiagonalLayoutParentData> {
+
+    override fun update(other: DiagonalLayoutParentData) {
+        placeFractionHorizontal = other.placeFractionHorizontal
+        placeFractionVertical = other.placeFractionVertical
+    }
+
+    companion object {
+
+        val pageDateConverter = ParentDataConverter(DiagonalLayoutParentData::class) {
+            DiagonalLayoutParentData(1f, 1f)
+        }
+    }
+}
+
+private val DiagonalLayoutParentData.placeFraction: Pair<Float, Float>
+    get() = placeFractionHorizontal to placeFractionVertical
+
 private data class DiagonalLayoutMeasurePolicy(
     private val alignment: Alignment,
 ) : MeasurePolicy {
@@ -78,12 +125,10 @@ private data class DiagonalLayoutMeasurePolicy(
         var fixedSpaceSize = 0 intSize 0
         val placeables = measurables.map { measurable ->
             val placeable = measurable.measure(
-                Constraints(
-                    maxWidth = constraints.maxWidth - fixedSpaceSize.width,
-                    maxHeight = constraints.maxHeight - fixedSpaceSize.height,
-                )
+                maxWidth = constraints.maxWidth - fixedSpaceSize.width,
+                maxHeight = constraints.maxHeight - fixedSpaceSize.height,
             )
-            fixedSpaceSize += placeable.size * placeable.placeFraction
+            fixedSpaceSize += placeable.size * DiagonalLayoutParentData.pageDateConverter.parentData(placeable).placeFraction
             placeable
         }
         val spaceSize = fixedSpaceSize.coerceAtLeast(constraints.minSize)
@@ -118,73 +163,7 @@ private data class DiagonalLayoutMeasurePolicy(
             }
             val positionY = placePosition.y - fixedSpaceSize.height * alignment.verticalBias
             placeable.place(positionX intOffset positionY)
-            fixedSpaceSize += placeSize * placeable.placeFraction
+            fixedSpaceSize += placeable.size * DiagonalLayoutParentData.pageDateConverter.parentData(placeable).placeFraction
         }
     }
 }
-
-private class DiagonalLayoutElement(
-    private val placeFractionHorizontal: Float,
-    private val placeFractionVertical: Float,
-) : ModifierNodeElement<DiagonalLayoutNode>() {
-
-    override fun create(): DiagonalLayoutNode {
-        return DiagonalLayoutNode(
-            placeFractionHorizontal = placeFractionHorizontal,
-            placeFractionVertical = placeFractionVertical,
-        )
-    }
-
-    override fun update(node: DiagonalLayoutNode) {
-        node.placeFractionHorizontal = placeFractionHorizontal
-        node.placeFractionVertical = placeFractionVertical
-    }
-
-    override fun InspectorInfo.inspectableProperties() {
-        debugInspectorInfo {
-            name = "placeFraction"
-            properties["placeFractionHorizontal"] = placeFractionHorizontal
-            properties["placeFractionVertical"] = placeFractionVertical
-        }
-    }
-
-    override fun hashCode(): Int {
-        Float.hashCode()
-        return (placeFractionHorizontal to placeFractionVertical).hashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        val otherModifier = other as? DiagonalLayoutElement ?: return false
-        return placeFractionHorizontal == otherModifier.placeFractionHorizontal && placeFractionVertical == otherModifier.placeFractionVertical
-    }
-
-}
-
-private class DiagonalLayoutNode(
-    var placeFractionHorizontal: Float,
-    var placeFractionVertical: Float,
-) : ParentDataModifierNode, Modifier.Node() {
-
-    override fun Density.modifyParentData(parentData: Any?): DiagonalLayoutParentData {
-        return ((parentData as? DiagonalLayoutParentData) ?: DiagonalLayoutParentData()).also {
-            it.placeFractionHorizontal = placeFractionHorizontal
-            it.placeFractionVertical = placeFractionVertical
-        }
-    }
-}
-
-private val Measured.diagonalLayoutParentData: DiagonalLayoutParentData?
-    get() = parentData as? DiagonalLayoutParentData
-
-private val Measured.placeFraction: Pair<Float, Float>
-    get() {
-        val placeFractionHorizontal = diagonalLayoutParentData?.placeFractionHorizontal ?: 1f
-        val placeFractionVertical = diagonalLayoutParentData?.placeFractionVertical ?: 1f
-        return placeFractionHorizontal to placeFractionVertical
-    }
-
-private data class DiagonalLayoutParentData(
-    var placeFractionHorizontal: Float? = null,
-    var placeFractionVertical: Float? = null,
-)
