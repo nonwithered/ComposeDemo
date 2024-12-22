@@ -1,10 +1,15 @@
 package compose.project.demo.common.test
 
+import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.animation.core.spring
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.AnchoredDraggableState
+import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.anchoredDraggable
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.rememberTransformableState
@@ -31,9 +36,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
@@ -50,6 +57,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
         { TestTriStateToggleable() },
         { TestDraggable() },
         { TestTransformable() },
+        { TestAnchoredDraggable() },
     )
 
     @Composable
@@ -253,5 +261,45 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                     .background(Color.Blue),
             )
         }
+    }
+
+    private enum class DragAnchors {
+        Start,
+        Center,
+        End,
+    }
+
+    @Composable
+    private fun BoxScope.TestAnchoredDraggable() {
+        val density = LocalDensity.current
+        val defaultActionSize = 200.dp
+        val endActionSizePx = with(density) { defaultActionSize.toPx() }
+        val startActionSizePx = with(density) { defaultActionSize.toPx() }
+        val state = remember {
+            AnchoredDraggableState(
+                initialValue = DragAnchors.Center,
+                anchors = DraggableAnchors {
+                    DragAnchors.Start at -startActionSizePx
+                    DragAnchors.Center at 0f
+                    DragAnchors.End at endActionSizePx
+                },
+                positionalThreshold = { distance: Float -> distance * 0.5f },
+                velocityThreshold = { with(density) { 100.dp.toPx() } },
+                snapAnimationSpec = spring(),
+                decayAnimationSpec = exponentialDecay(),
+            )
+        }
+        Text(
+            text = "anchoredDraggable",
+            fontSize = 30.sp,
+            textAlign = TextAlign.Center,
+            color = Color.White,
+            modifier = Modifier.align(Alignment.Center)
+                .offset {
+                    state.requireOffset() intOffset 0
+                }
+                .background(Color.Blue)
+                .anchoredDraggable(state, Orientation.Horizontal),
+        )
     }
 }
