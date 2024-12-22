@@ -64,41 +64,49 @@ operator fun IntRect.minus(rhs: Offset): IntRect {
 
 // Rect operator Size
 
+@Stable
 operator fun Rect.plus(rhs: Size): Rect {
     val lhs = this
     return lhs.topLeft rect (lhs.size + rhs)
 }
 
+@Stable
 operator fun Rect.plus(rhs: IntSize): Rect {
     val lhs = this
     return lhs + rhs.toSize()
 }
 
+@Stable
 operator fun Rect.minus(rhs: Size): Rect {
     val lhs = this
     return lhs + -rhs
 }
 
+@Stable
 operator fun Rect.minus(rhs: IntSize): Rect {
     val lhs = this
     return lhs + -rhs
 }
 
+@Stable
 operator fun IntRect.plus(rhs: IntSize): IntRect {
     val lhs = this
     return lhs.topLeft intRect (lhs.size + rhs)
 }
 
+@Stable
 operator fun IntRect.plus(rhs: Size): IntRect {
     val lhs = this
     return lhs + rhs.roundToIntSize()
 }
 
+@Stable
 operator fun IntRect.minus(rhs: Size): IntRect {
     val lhs = this
     return lhs + -rhs
 }
 
+@Stable
 operator fun IntRect.minus(rhs: IntSize): IntRect {
     val lhs = this
     return lhs + -rhs
