@@ -11,12 +11,21 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasurePolicy
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
+import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.node.ModifierNodeElement
 import androidx.compose.ui.node.ParentDataModifierNode
 import androidx.compose.ui.platform.InspectorInfo
 import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.LayoutDirection
+import compose.project.demo.common.utils.coerceAtLeast
+import compose.project.demo.common.utils.horizontalBias
+import compose.project.demo.common.utils.intOffset
+import compose.project.demo.common.utils.intSize
+import compose.project.demo.common.utils.plus
+import compose.project.demo.common.utils.verticalBias
 
 @Composable
 fun DiagonalLayout(
@@ -51,9 +60,53 @@ private data class DiagonalLayoutMeasurePolicy(
 
     override fun MeasureScope.measure(
         measurables: List<Measurable>,
-        constraints: Constraints
+        constraints: Constraints,
     ): MeasureResult {
-        TODO("Not yet implemented")
+        var fixedSpaceSize = 0 intSize 0
+        val placeables = measurables.map { measurable ->
+            val placeable = measurable.measure(
+                Constraints(
+                    maxWidth = constraints.maxWidth - fixedSpaceSize.width,
+                    maxHeight = constraints.maxHeight - fixedSpaceSize.height,
+                )
+            )
+            fixedSpaceSize += (placeable.width intSize placeable.height)
+            placeable
+        }
+        val spaceSize = fixedSpaceSize.coerceAtLeast(constraints.minWidth intSize constraints.minHeight)
+        return layout(
+            width = spaceSize.width,
+            height = spaceSize.height,
+        ) {
+            layoutPlaceable(layoutDirection, spaceSize, placeables)
+        }
+    }
+
+    private fun Placeable.PlacementScope.layoutPlaceable(
+        layoutDirection: LayoutDirection,
+        spaceSize: IntSize,
+        placeables: List<Placeable>,
+    ) {
+        var fixedSpaceSize = 0 intSize 0
+        placeables.forEach { placeable ->
+            val placeSize = placeable.width intSize placeable.height
+            val placePosition = alignment.align(
+                size = placeSize,
+                space = spaceSize,
+                layoutDirection,
+            )
+            val positionX = placePosition.x - fixedSpaceSize.width * alignment.horizontalBias * when (layoutDirection) {
+                LayoutDirection.Ltr -> {
+                    1f
+                }
+                LayoutDirection.Rtl -> {
+                    -1f
+                }
+            }
+            val positionY = placePosition.y - fixedSpaceSize.height * alignment.verticalBias
+            placeable.place(positionX intOffset positionY)
+            fixedSpaceSize += placeSize
+        }
     }
 }
 

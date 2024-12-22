@@ -107,7 +107,7 @@ private class MutableStateFlowVolatileImpl<T>(
 fun <T> StateFlow<T>.collectAsStateVolatile(
     context: CoroutineContext = EmptyCoroutineContext,
 ): State<T> {
-    var version by AtomicIntWrapper(0)
+    var version by AtomicIntProxy(0)
     val state = produceState(version to value, this, context) {
         if (context == EmptyCoroutineContext) {
             collect { value = ++version to it }
