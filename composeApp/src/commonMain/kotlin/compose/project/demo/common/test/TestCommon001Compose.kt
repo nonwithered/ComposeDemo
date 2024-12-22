@@ -27,12 +27,14 @@ import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
 import compose.project.demo.common.utils.logD
+import compose.project.demo.common.utils.logE
 import kotlinx.datetime.Clock
 
 object TestCommon001Compose : TestCase<TestCommon001Compose> {
 
     @Composable
     override fun BoxScope.Content() {
+        TAG.logE (AssertionError()) { "stackTrace Composable" }
         var editText by remember {
             mutableStateOf("")
         }
@@ -63,6 +65,7 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
                         onClick = {
                             showText = editText
                             TAG.logD { "onClick $editText" }
+                            TAG.logE(AssertionError()) { "stackTrace onClick" }
                         },
                         modifier = Modifier.width(120.dp)
                             .align(Alignment.CenterVertically),
