@@ -23,5 +23,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon016SharedElement.asCaseItem,
         TestCommon017SharedBounds.asCaseItem,
         TestCommon018SharedCustom.asCaseItem,
+        TestCommon019CustomLayout.asCaseItem,
     )
 }
