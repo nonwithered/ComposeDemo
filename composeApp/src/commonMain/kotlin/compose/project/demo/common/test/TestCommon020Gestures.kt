@@ -10,10 +10,14 @@ import androidx.compose.foundation.gestures.AnchoredDraggableState
 import androidx.compose.foundation.gestures.DraggableAnchors
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.anchoredDraggable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.gestures.rememberTransformableState
 import androidx.compose.foundation.gestures.transformable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -36,6 +40,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +63,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
         { TestDraggable() },
         { TestTransformable() },
         { TestAnchoredDraggable() },
+        { TestDetectGestures() },
     )
 
     @Composable
@@ -296,10 +302,97 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
             color = Color.White,
             modifier = Modifier.align(Alignment.Center)
                 .offset {
-                    state.requireOffset() intOffset 0
+                    0 intOffset state.requireOffset()
                 }
                 .background(Color.Blue)
-                .anchoredDraggable(state, Orientation.Horizontal),
+                .anchoredDraggable(state, Orientation.Vertical),
         )
+    }
+
+    @Composable
+    private fun BoxScope.TestDetectGestures() {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.fillMaxWidth()
+                .fillMaxHeight(0.9f)
+                .background(Color.LightGray),
+        ) {
+            var detectTapGesturesState by remember {
+                mutableStateOf("")
+            }
+            Text(
+                text = "detectTapGestures $detectTapGesturesState",
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth()
+                    .weight(1f)
+                    .background(Color.Red)
+                    .pointerInput(Unit) {
+                        detectTapGestures(
+                            onDoubleTap = { offset ->
+                                detectTapGesturesState = "\nonDoubleTap\n$offset"
+                            },
+                            onLongPress = { offset ->
+                                detectTapGesturesState = "\nonLongPress\n$offset"
+                            },
+                            onPress = { offset ->
+                                detectTapGesturesState = "\nonPress\n$offset"
+                            },
+                            onTap = { offset ->
+                                detectTapGesturesState = "\nonTap\n$offset"
+                            },
+                        )
+                    },
+            )
+            var detectDragGesturesState by remember {
+                mutableStateOf("")
+            }
+            Text(
+                text = "detectDragGestures $detectDragGesturesState",
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth()
+                    .weight(1f)
+                    .background(Color.Green)
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDragStart = { offset ->
+                                detectDragGesturesState = "\nonDragStart\n$offset"
+                            },
+                            onDragEnd = {
+                                detectDragGesturesState = "\nonDragEnd"
+                            },
+                            onDragCancel = {
+                                detectDragGesturesState = "onDragCancel"
+                            },
+                            onDrag = { change, dragAmount ->
+                                detectDragGesturesState = "\nonDrag\n$dragAmount"
+                            },
+                        )
+                    },
+            )
+            var detectTransformGesturesState by remember {
+                mutableStateOf("")
+            }
+            Text(
+                text = "detectTransformGestures $detectTransformGesturesState",
+                fontSize = 30.sp,
+                textAlign = TextAlign.Center,
+                color = Color.White,
+                modifier = Modifier.fillMaxWidth()
+                    .weight(1f)
+                    .background(Color.Blue)
+                    .pointerInput(Unit) {
+                        detectTransformGestures(
+                            onGesture = { centroid, pan, zoom, rotation ->
+                                detectTransformGesturesState = "\nonGesture\n$centroid\n$pan\n$zoom\n$rotation"
+                            },
+                        )
+                    },
+            )
+        }
     }
 }
