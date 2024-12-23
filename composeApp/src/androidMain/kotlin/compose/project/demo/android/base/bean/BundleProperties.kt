@@ -8,14 +8,14 @@ import java.io.Serializable
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-abstract class BundleProperties(
+open class BundleProperties(
     private val bundle: Bundle = Bundle(),
 ) : BaseProperties<Any>() {
 
     fun asBundle(): Bundle = bundle
 
     @SuppressLint("NewApi")
-    override fun getValue(type: KClass<*>, k: String): Any? {
+    override fun getPropertyValue(type: KClass<*>, k: String): Any? {
         return bundle.run {
             when (type) {
                 Boolean::class -> getBoolean(k)
@@ -37,7 +37,7 @@ abstract class BundleProperties(
         }
     }
 
-    override fun setValue(type: KClass<*>, k: String, v: Any?) {
+    override fun setPropertyValue(type: KClass<*>, k: String, v: Any?) {
         if (v === null) {
             bundle.remove(k)
             return

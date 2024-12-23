@@ -6,10 +6,17 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.Measured
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.node.ModifierNodeElement
+import androidx.compose.ui.node.ParentDataModifierNode
+import androidx.compose.ui.platform.InspectorInfo
+import androidx.compose.ui.platform.debugInspectorInfo
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.IntSize
+import compose.project.demo.common.base.bean.BasePropertyOwner
+import compose.project.demo.common.base.bean.MapProperties
+import compose.project.demo.common.base.bean.PropertyProxy
+import compose.project.demo.common.base.bean.createPropertyProxy
 import kotlin.reflect.KClass
-import kotlin.reflect.cast
 
 val Constraints.minSize: IntSize
     get() = minWidth intSize minHeight
@@ -43,63 +50,88 @@ fun Measurable.measure(
     maxHeight = maxHeight,
 ))
 
-interface BaseParentData<T : BaseParentData<T>> {
+interface BaseParentData<P : BaseParentData<P>>
 
-    fun update(other: T)
-}
-
-sealed class ParentDataWeakConverter<T : BaseParentData<T>>(
-    private val type: KClass<T>,
+class ParentDataConverter<P : BaseParentData<P>>(
+    private val type: KClass<P>,
+    private val factory: () -> P? = { null },
 ) {
 
-    open fun parentData(owner: IntrinsicMeasurable): T? {
-        return cast(owner.parentData)
+    fun castOrNull(owner: IntrinsicMeasurable): P? {
+        return castOrNull(owner.parentData)
     }
 
-    open fun parentData(owner: Measured): T? {
-        return cast(owner.parentData)
+    fun castOrNull(owner: Measured): P? {
+        return castOrNull(owner.parentData)
     }
 
-    open fun cast(parentData: Any?): T? {
+    fun castOrNull(parentData: Any?): P? {
         if (!type.isInstance(parentData)) {
             return null
         }
         @Suppress("UNCHECKED_CAST")
-        return parentData as? T
+        return parentData as? P
+    }
+
+    fun cast(owner: IntrinsicMeasurable): P {
+        return cast(owner.parentData)
+    }
+
+    fun cast(owner: Measured): P {
+        return cast(owner.parentData)
+    }
+
+    fun cast(parentData: Any?): P {
+        return castOrNull(parentData) ?: factory()!!
     }
 }
 
-class ParentDataConverter<T : BaseParentData<T>>(
-    type: KClass<T>,
-    val createDefault: () -> T,
-) : ParentDataWeakConverter<T>(type) {
+interface BaseParentDataModifierNode<P : BaseParentData<P>> : ParentDataModifierNode {
 
-    override fun parentData(owner: IntrinsicMeasurable): T {
-        return super.parentData(owner) ?: createDefault()
-    }
+    val converter: ParentDataConverter<P>
 
-    override fun parentData(owner: Measured): T {
-        return super.parentData(owner) ?: createDefault()
-    }
+    val optional: Boolean
+        get() = false
 
-    override fun cast(parentData: Any?): T {
-        return super.cast(parentData) ?: createDefault()
+    fun onModify(parentData: P, density: Density)
+
+    override fun Density.modifyParentData(parentData: Any?): P? {
+        val attr = if (optional) {
+            converter.castOrNull(parentData)
+        } else {
+            converter.cast(parentData)
+        }
+        val density = this
+        if (attr !== null) {
+            onModify(attr, density)
+        }
+        return attr
     }
 }
 
-interface ParentDataHolder<T : BaseParentData<T>> {
+abstract class BaseModifierNodeElement<N : Modifier.Node>(
+    private val properties: MapProperties<Any> = MapProperties(),
+) : ModifierNodeElement<N>() , BasePropertyOwner<Any> by properties {
 
-    val parentData: T
-}
+    protected abstract val type: KClass<out BaseModifierNodeElement<N>>
 
-abstract class BaseModifierNodeElement<N, T : BaseParentData<T>>(
-    private val type: KClass<out BaseModifierNodeElement<N, T>>,
-) : ModifierNodeElement<N>() where N : Modifier.Node, N : ParentDataHolder<T> {
+    protected open val debugInspectorInfo: Boolean
+        get() = true
 
-    protected abstract fun createParentData(): T
+    protected val propertyProxyList: MutableList<PropertyProxy<Any, out Any>> = mutableListOf()
+
+    private val propertyList: List<Any?>
+        get() = propertyProxyList.map {
+            it.getValue(this)
+        }
+
+    protected inline fun <reified T : Any> String.property(v: T): T {
+        propertyProxyList += createPropertyProxy(this@BaseModifierNodeElement, this, v)
+        return v
+    }
 
     override fun hashCode(): Int {
-        return createParentData().hashCode()
+        return propertyList.combinedHashCode
     }
 
     override fun equals(other: Any?): Boolean {
@@ -109,10 +141,22 @@ abstract class BaseModifierNodeElement<N, T : BaseParentData<T>>(
         if (!type.isInstance(other)) {
             return false
         }
-        return createParentData() == type.cast(other).createParentData()
+        other as BaseModifierNodeElement<*>
+        return propertyList combinedEquals other.propertyList
     }
 
-    override fun update(node: N) {
-        node.parentData.update(createParentData())
+    override fun InspectorInfo.inspectableProperties() {
+        if (!debugInspectorInfo) {
+            inspectorInfo()
+        } else debugInspectorInfo {
+            inspectorInfo()
+        }
+    }
+
+    private fun InspectorInfo.inspectorInfo() {
+        name = type.simpleName
+        propertyProxyList.forEach {
+            properties[it.k] = it.getValue(this@BaseModifierNodeElement).toString()
+        }
     }
 }

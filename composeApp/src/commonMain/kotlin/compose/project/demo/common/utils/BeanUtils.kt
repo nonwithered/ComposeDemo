@@ -53,3 +53,26 @@ val <K, V> MutableMap<K, V>?.elseEmpty: Map<K, V>
 
 inline val <reified T> Array<T>?.elseEmpty: Array<T>
     get() = elseValue(arrayOf())
+
+val Iterable<Any?>.combinedHashCode: Int
+    get() {
+        var result = 1
+        forEach {
+            result *= 31
+            result += it.hashCode()
+        }
+        return result
+    }
+
+infix fun List<Any?>.combinedEquals(rhs: List<Any?>): Boolean {
+    val lhs = this
+    if (lhs.size != rhs.size) {
+        return false
+    }
+    repeat(size) { i ->
+        if (lhs[i] != rhs[i]) {
+            return false
+        }
+    }
+    return true
+}

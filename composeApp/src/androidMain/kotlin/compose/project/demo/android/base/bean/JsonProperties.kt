@@ -6,13 +6,13 @@ import org.json.JSONObject
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-abstract class JsonProperties(
+class JsonProperties(
     private val json: JSONObject = JSONObject(),
 ) : BaseProperties<Any>() {
 
     fun asJson(): JSONObject = json
 
-    override fun getValue(type: KClass<*>, k: String): Any? {
+    override fun getPropertyValue(type: KClass<*>, k: String): Any? {
         return json.runCatching { when (type) {
             Boolean::class -> getBoolean(k)
             Int::class -> getInt(k)
@@ -31,7 +31,7 @@ abstract class JsonProperties(
         } }.getOrNull()
     }
 
-    override fun setValue(type: KClass<*>, k: String, v: Any?) {
+    override fun setPropertyValue(type: KClass<*>, k: String, v: Any?) {
         if (v === null) {
             json.remove(k)
             return

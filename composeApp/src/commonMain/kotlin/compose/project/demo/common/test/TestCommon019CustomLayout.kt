@@ -64,18 +64,14 @@ object TestCommon019CustomLayout : TestCase<TestCommon019CustomLayout> {
                     modifier = Modifier.background(Color.Red.copy(alpha = 0.5f))
                         .fillMaxWidth(0.5f)
                         .height(120.dp)
-                        .placeFraction(
-                            placeFractionHorizontal = 0.5f,
-                            placeFractionVertical = 2f,
-                        ),
+                        .placeFractionHorizontal(0.5f)
+                        .placeFractionVertical(2f),
                 )
                 Spacer(
                     modifier = Modifier.background(Color.Green.copy(alpha = 0.5f))
                         .width(120.dp)
                         .fillMaxHeight(0.5f)
-                        .placeFraction(
-                            placeFractionVertical = 0.5f,
-                        ),
+                        .placeFractionVertical(0.5f),
                 )
                 Spacer(
                     modifier = Modifier.background(Color.Blue.copy(alpha = 0.5f))

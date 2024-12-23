@@ -10,11 +10,11 @@ open class URLSearchParamsProperties(
 
     fun asURLSearchParams(): URLSearchParams = search
 
-    override fun getValue(type: KClass<*>, k: String): String? {
+    override fun getPropertyValue(type: KClass<*>, k: String): String? {
         return search.get(k)
     }
 
-    override fun setValue(type: KClass<*>, k: String, v: String?) {
+    override fun setPropertyValue(type: KClass<*>, k: String, v: String?) {
         if (v === null) {
             search.delete(k)
             return
