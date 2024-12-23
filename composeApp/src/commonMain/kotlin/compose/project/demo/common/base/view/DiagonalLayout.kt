@@ -25,6 +25,8 @@ import compose.project.demo.common.utils.coerceAtLeast
 import compose.project.demo.common.utils.horizontalBias
 import compose.project.demo.common.utils.intOffset
 import compose.project.demo.common.utils.intSize
+import compose.project.demo.common.utils.logD
+import compose.project.demo.common.utils.logE
 import compose.project.demo.common.utils.measure
 import compose.project.demo.common.utils.minSize
 import compose.project.demo.common.utils.plus
@@ -85,9 +87,13 @@ private class DiagonalLayoutHorizontalElement(
 
     override val type = DiagonalLayoutHorizontalElement::class
 
-    override fun create() = DiagonalLayoutHorizontalNode(placeFractionHorizontal)
+    override fun create(): DiagonalLayoutHorizontalNode {
+        "DiagonalLayout".logE(AssertionError()) { "DiagonalLayoutHorizontalElement create" }
+      return DiagonalLayoutHorizontalNode(placeFractionHorizontal)
+    }
 
     override fun update(node: DiagonalLayoutHorizontalNode) {
+        "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutHorizontalElement update" }
         node.placeFractionHorizontal = placeFractionHorizontal
     }
 }
@@ -100,9 +106,13 @@ private class DiagonalLayoutVerticalElement(
 
     override val type = DiagonalLayoutVerticalElement::class
 
-    override fun create() = DiagonalLayoutVerticalNode(placeFractionVertical)
+    override fun create(): DiagonalLayoutVerticalNode {
+        "DiagonalLayout".logE(AssertionError()) { "DiagonalLayoutVerticalElement create" }
+        return DiagonalLayoutVerticalNode(placeFractionVertical)
+    }
 
     override fun update(node: DiagonalLayoutVerticalNode) {
+        "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutVerticalElement update" }
         node.placeFractionVertical = placeFractionVertical
     }
 }
@@ -113,8 +123,14 @@ private class DiagonalLayoutHorizontalNode(
 
     override val converter = DiagonalLayoutParentData.parentDataConverter
 
-    override fun onModify(parentData: DiagonalLayoutParentData, density: Density) {
+    override fun update(parentData: DiagonalLayoutParentData, density: Density) {
         parentData.placeFractionHorizontal = placeFractionHorizontal
+    }
+
+    override fun modifyParentData(parentData: Any?, density: Density): DiagonalLayoutParentData? {
+        return super.modifyParentData(parentData, density).also {
+            "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutHorizontalNode modifyParentData" }
+        }
     }
 }
 
@@ -124,8 +140,14 @@ private class DiagonalLayoutVerticalNode(
 
     override val converter = DiagonalLayoutParentData.parentDataConverter
 
-    override fun onModify(parentData: DiagonalLayoutParentData, density: Density) {
+    override fun update(parentData: DiagonalLayoutParentData, density: Density) {
         parentData.placeFractionVertical = placeFractionVertical
+    }
+
+    override fun modifyParentData(parentData: Any?, density: Density): DiagonalLayoutParentData? {
+        return super.modifyParentData(parentData, density).also {
+            "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutVerticalNode modifyParentData" }
+        }
     }
 }
 
@@ -153,6 +175,7 @@ private data class DiagonalLayoutMeasurePolicy(
         measurables: List<Measurable>,
         constraints: Constraints,
     ): MeasureResult {
+        "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutMeasurePolicy measure" }
         var fixedSpaceSize = 0 intSize 0
         val placeables = measurables.map { measurable ->
             val placeable = measurable.measure(
@@ -176,6 +199,7 @@ private data class DiagonalLayoutMeasurePolicy(
         spaceSize: IntSize,
         placeables: List<Placeable>,
     ) {
+        "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutMeasurePolicy layout" }
         var fixedSpaceSize = 0 intSize 0
         placeables.forEach { placeable ->
             val placeSize = placeable.size

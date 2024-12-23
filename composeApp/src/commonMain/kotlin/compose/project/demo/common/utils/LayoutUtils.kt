@@ -93,17 +93,20 @@ interface BaseParentDataModifierNode<P : BaseParentData<P>> : ParentDataModifier
     val optional: Boolean
         get() = false
 
-    fun onModify(parentData: P, density: Density)
+    fun update(parentData: P, density: Density)
 
     override fun Density.modifyParentData(parentData: Any?): P? {
+        return modifyParentData(parentData, this)
+    }
+
+    fun modifyParentData(parentData: Any?, density: Density): P? {
         val attr = if (optional) {
             converter.castOrNull(parentData)
         } else {
             converter.cast(parentData)
         }
-        val density = this
         if (attr !== null) {
-            onModify(attr, density)
+            update(attr, density)
         }
         return attr
     }
