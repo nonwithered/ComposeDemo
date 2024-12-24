@@ -7,23 +7,29 @@ class NestedScrollingChildProxy(view: View) : BaseNestedScrollingChild {
 
     override val childHelper = NestedScrollingChildHelper(view)
 
-    fun delegateParent(scrollAxes: Int): NestedScrollingParentProxy.Delegate {
-        return ParentDelegate(scrollAxes, this)
+    init {
+        isNestedScrollingEnabled = true
     }
 
-    private class ParentDelegate(
+    fun delegate(scrollAxes: Int, delegate: NestedScrollingParentProxy.Delegate): NestedScrollingParentProxy.Delegate {
+        return Delegate(scrollAxes, delegate, this)
+    }
+
+    private class Delegate(
         override val scrollAxes: Int,
+        private val delegate: NestedScrollingParentProxy.Delegate,
         proxy: NestedScrollingChildProxy,
     ) : BaseNestedScrollingChild by proxy, NestedScrollingParentProxy.Delegate {
 
-        init {
-            isNestedScrollingEnabled = true
-        }
-
         override fun onPreScroll(target: View, dx: Int, dy: Int, consumed: IntArray, type: Int) {
-            if (startNestedScroll(scrollAxes, type)) {
-                dispatchNestedPreScroll(dx, dy, consumed, null, type)
+            if (!startNestedScroll(scrollAxes, type)) {
+                return
             }
+            val parentConsumed = IntArray(2)
+            dispatchNestedPreScroll(dx, dy, parentConsumed, null, type)
+            delegate.onPreScroll(target, dx, dy, consumed, type)
+            consumed[0] += parentConsumed[0]
+            consumed[1] += parentConsumed[1]
         }
 
         override fun onPostScroll(
@@ -35,13 +41,28 @@ class NestedScrollingChildProxy(view: View) : BaseNestedScrollingChild {
             type: Int,
             consumed: IntArray,
         ) {
-            if (startNestedScroll(scrollAxes, type)) {
-                dispatchNestedScroll(dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, null, type, consumed)
+            if (!startNestedScroll(scrollAxes, type)) {
+                return
             }
+            delegate.onPostScroll(target, dxConsumed, dyConsumed, dxUnconsumed, dyUnconsumed, type, consumed)
+            val parentConsumed = IntArray(2)
+            dispatchNestedScroll(
+                dxConsumed + consumed[0],
+                dyConsumed + consumed[1],
+                dxUnconsumed - consumed[0],
+                dyUnconsumed - consumed[1],
+                null,
+                type,
+                parentConsumed,
+            )
+            consumed[0] += parentConsumed[0]
+            consumed[1] += parentConsumed[1]
         }
 
         override fun onPreFling(target: View, velocityX: Float, velocityY: Float): Boolean {
-            return dispatchNestedPreFling(velocityY, velocityY).also {
+            return try {
+                dispatchNestedPreFling(velocityY, velocityY) || delegate.onPreFling(target, velocityX, velocityY)
+            } finally {
                 stopNestedScroll()
             }
         }
@@ -52,7 +73,11 @@ class NestedScrollingChildProxy(view: View) : BaseNestedScrollingChild {
             velocityY: Float,
             consumed: Boolean,
         ): Boolean {
-            return dispatchNestedFling(velocityY, velocityY, consumed).also {
+            return try {
+                var handled = delegate.onPostFling(target, velocityX, velocityY, consumed)
+                handled = dispatchNestedFling(velocityY, velocityY, consumed || handled) || handled
+                !consumed && handled
+            } finally {
                 stopNestedScroll()
             }
         }
