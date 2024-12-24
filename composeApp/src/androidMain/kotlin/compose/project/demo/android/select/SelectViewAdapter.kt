@@ -6,7 +6,7 @@ import compose.project.demo.android.utils.loadService
 
 class SelectViewAdapter : BaseViewAdapter<SelectItem, SelectViewHolder>() {
 
-    override val items = loadService<SelectItem>() + TestAndroidCollector.list.map { CaseSelectItem(it) }
+    override val items = loadService<SelectItem>() + TestAndroidCollector.list
 
     override val factory = listOf(
         SelectViewFactory,

@@ -8,7 +8,7 @@ interface SelectItem {
     val fragmentClass: Class<out Fragment>
 
     val pageName: String
-        get() = fragmentClass.simpleName
+        get() = javaClass.simpleName
 
     val showActionBar: Boolean
         get() = true

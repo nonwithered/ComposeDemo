@@ -4,7 +4,7 @@ import androidx.fragment.app.Fragment
 import compose.project.demo.common.test.collect.CaseItem
 
 class CaseSelectItem(
-    private val item: CaseItem,
+    val item: CaseItem,
 ) : SelectItem {
 
     override val fragmentClass: Class<out Fragment>

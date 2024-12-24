@@ -4,7 +4,7 @@ import compose.project.demo.common.test.*
 
 object TestCommonCollector : BaseTestCollector() {
 
-    override val list = listOf(
+    val list = listOf(
         TestCommon001Compose.asCaseItem,
         TestCommon002Text.asCaseItem,
         TestCommon003Spanned.asCaseItem,

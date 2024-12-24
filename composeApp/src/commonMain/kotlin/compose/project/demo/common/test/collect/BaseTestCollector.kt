@@ -6,8 +6,6 @@ import compose.project.demo.common.utils.logD
 
 abstract class BaseTestCollector {
 
-    abstract val list: List<CaseItem>
-
     protected inline val <reified T : TestCase<T>> TestCase<T>.asCaseItem: CaseItem
         get() {
             if (!type.isInstance(this)) {

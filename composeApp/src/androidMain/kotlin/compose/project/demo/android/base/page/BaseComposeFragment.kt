@@ -16,7 +16,7 @@ import compose.project.demo.R
 abstract class BaseComposeFragment : BaseFragment() {
 
     final override val layoutId: Int
-        get() = R.layout.compose_fragment
+        get() = R.layout.item_compose
 
     final override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
