@@ -25,5 +25,6 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon018SharedCustom.asCaseItem,
         TestCommon019CustomLayout.asCaseItem,
         TestCommon020Gestures.asCaseItem,
+        TestCommon021Loadmore.asCaseItem,
     )
 }
