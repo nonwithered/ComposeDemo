@@ -8,6 +8,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -62,11 +63,12 @@ object TestAndroid003NestedScroll : SelectItem {
         override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
             super.onViewCreated(view, savedInstanceState)
             val frameLayout: FrameLayout = view as FrameLayout
-            val scroll: NestedScrollView = LayoutInflater.from(frameLayout.context).inflate(R.layout.page_nested_scroll, frameLayout, false) as NestedScrollView
-            frameLayout.addView(scroll)
-            initNestedScrollView(scroll)
-            val compose: ComposeView = LayoutInflater.from(scroll.context).inflate(R.layout.test_003_item_compose, scroll, false).also {
-                addViewIntoScroll(scroll, it, INDEX)
+            val v = LayoutInflater.from(frameLayout.context).inflate(R.layout.test_003_page_nested_scroll, frameLayout, false)
+            frameLayout.addView(v)
+            val linear: LinearLayout = v.findViewById(R.id.linear_layout)
+            initNestedScrollView(linear)
+            val compose: ComposeView = LayoutInflater.from(view.context).inflate(R.layout.test_003_item_compose, linear, false).also {
+                linear.addView(it, INDEX)
             }.findViewById(R.id.compose_view)
             compose.updateLayoutParams {
                 height = (HEIGHT * resources.displayMetrics.density).roundToInt()
@@ -100,6 +102,9 @@ object TestAndroid003NestedScroll : SelectItem {
                                 modifier = Modifier.fillMaxWidth()
                                     .height(HEIGHT.dp)
                                     .background(Color.Yellow)
+                                    .scrollable(rememberScrollableState { pixels ->
+                                        pixels
+                                    }, Orientation.Vertical)
                                     .nestedScroll(connection = object : NestedScrollConnection {
 
                                         override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
@@ -118,10 +123,12 @@ object TestAndroid003NestedScroll : SelectItem {
                             ) {
                                 AndroidView(
                                     factory = { context ->
-                                        val scrollItem: NestedScrollView = LayoutInflater.from(context).inflate(R.layout.page_nested_scroll, null) as NestedScrollView
-                                        initNestedScrollView(scrollItem)
-                                        ViewCompat.setNestedScrollingEnabled(scrollItem, true)
-                                        scrollItem
+                                        val v = LayoutInflater.from(context).inflate(R.layout.test_003_page_nested_scroll, null)
+                                        val linear: LinearLayout = v.findViewById(R.id.linear_layout)
+                                        initNestedScrollView(linear)
+                                        val scroll: NestedScrollView = v.findViewById(R.id.scroll_layout)
+                                        scroll.isNestedScrollingEnabled = true
+                                        v
                                     },
                                     modifier = Modifier.matchParentSize(),
                                 )
@@ -132,16 +139,12 @@ object TestAndroid003NestedScroll : SelectItem {
             }
         }
 
-        private fun initNestedScrollView(scroll: NestedScrollView) {
+        private fun initNestedScrollView(group: ViewGroup) {
             repeat(COUNT) { i ->
-                val text: TextView = LayoutInflater.from(scroll.context).inflate(R.layout.test_003_item_text, scroll, false) as TextView
+                val text = LayoutInflater.from(group.context).inflate(R.layout.test_003_item_text, group, false) as TextView
                 text.text = "$i"
-                addViewIntoScroll(scroll, text)
+                group.addView(text)
             }
-        }
-
-        private fun addViewIntoScroll(scroll: NestedScrollView, view: View, index: Int = -1) {
-            scroll.children.mapNotNull { it as? ViewGroup }.first().addView(view, index)
         }
     }
 }
