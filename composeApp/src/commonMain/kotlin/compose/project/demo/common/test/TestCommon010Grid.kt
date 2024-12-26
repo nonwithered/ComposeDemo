@@ -108,6 +108,7 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
         val state = rememberLazyGridState()
         TAG.logD { "LazyColumn" }
         var items by list.asStateVolatile
+        val list = ArrayList(items)
         LazyVerticalGrid(
             columns = GridCells.Fixed(3),
             modifier = Modifier.fillMaxSize(),
@@ -115,7 +116,7 @@ object TestCommon010Grid : TestCase<TestCommon010Grid> {
             contentPadding = PaddingValues(8.dp),
         ) {
             itemsIndexed(
-                items = items,
+                items = list,
                 span = { _, it ->
                     val id = it.id
                     var name = it.name.value

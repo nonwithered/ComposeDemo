@@ -93,6 +93,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
         val state = rememberLazyListState()
         TAG.logD { "LazyColumn" }
         var items by list.asStateVolatile
+        val list = ArrayList(items)
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = state,
@@ -101,7 +102,7 @@ object TestCommon009List : TestCase<TestCommon009List> {
             horizontalAlignment = Alignment.End,
         ) {
             itemsIndexed(
-                items = items,
+                items = list,
                 key = { _, it -> it.id },
 //                contentType = { _, it -> it.style },
             ) { i, it ->

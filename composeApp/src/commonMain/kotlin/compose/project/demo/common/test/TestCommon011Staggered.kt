@@ -112,6 +112,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
         val state = rememberLazyStaggeredGridState()
         TAG.logD { "LazyColumn" }
         var items by list.asStateVolatile
+        val list = ArrayList(items)
         LazyVerticalStaggeredGrid(
             columns = StaggeredGridCells.Fixed(3),
             modifier = Modifier.fillMaxSize(),
@@ -119,7 +120,7 @@ object TestCommon011Staggered : TestCase<TestCommon011Staggered> {
             contentPadding = PaddingValues(8.dp),
         ) {
             itemsIndexed(
-                items = items,
+                items = list,
                 span = { _, it ->
                     if (it.style.value == 3) {
                         StaggeredGridItemSpan.FullLine
