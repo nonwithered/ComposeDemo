@@ -521,7 +521,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                 mutableStateOf(0)
             }
             Text(
-                text = "Child $awaitPointerEventScopeCount $awaitPointerEventScopeState",
+                text = "child $awaitPointerEventScopeCount $awaitPointerEventScopeState",
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
                 color = Color.White,

@@ -1,6 +1,7 @@
 package compose.project.demo.common.utils
 
 import compose.project.demo.common.base.bean.BaseValueProxy
+import kotlinx.atomicfu.AtomicRef
 import kotlinx.atomicfu.atomic
 
 class AtomicIntProxy(value: Int) : BaseValueProxy<Int>() {
@@ -21,4 +22,13 @@ class AtomicBooleanProxy(value: Boolean) : BaseValueProxy<Boolean>() {
 class AtomicRefProxy<T>(value: T) : BaseValueProxy<T>() {
 
     override var value: T by atomic(value)
+}
+
+fun <T> AtomicRef<T>.swap(update: T): T {
+    while (true) {
+        val expect = value
+        if (compareAndSet(expect, update)) {
+            return expect
+        }
+    }
 }
