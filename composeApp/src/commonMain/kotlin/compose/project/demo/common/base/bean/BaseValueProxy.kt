@@ -26,3 +26,7 @@ abstract class BaseValueProxy<T> {
         this.value = value
     }
 }
+
+operator fun <T> (() -> T).getValue(owner: Any?, property: KProperty<Any?>): T {
+    return this()
+}

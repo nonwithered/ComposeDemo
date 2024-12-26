@@ -47,12 +47,15 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
+import compose.project.demo.common.base.bean.getValue
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.utils.elseZero
 import compose.project.demo.common.utils.intOffset
@@ -408,7 +411,6 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
 
     @Composable
     private fun BoxScope.TestAwaitPointerEvent() {
-        val areaWidth = 50
         fun PointerInputChange?.isDown(): Boolean {
             if (this === null) {
                 return false
@@ -421,9 +423,21 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
         var parentCount by remember {
             mutableStateOf(0)
         }
+        var width by remember {
+            mutableStateOf(0)
+        }
+        val density = LocalDensity.current
+        val areaWidth by {
+            density.run {
+                (width / 6).toDp().value
+            }
+        }
         Column(
             modifier = Modifier.fillMaxWidth()
                 .fillMaxHeight(0.9f)
+                .onPlaced {
+                    width = it.size.width
+                }
                 .pointerInput(Unit) {
                     val currentContext = currentCoroutineContext()
                     awaitPointerEventScope {
