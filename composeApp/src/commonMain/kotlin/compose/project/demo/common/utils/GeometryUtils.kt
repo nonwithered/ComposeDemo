@@ -1,16 +1,22 @@
 package compose.project.demo.common.utils
 
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntRect
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.roundToIntSize
 import androidx.compose.ui.unit.toOffset
 import androidx.compose.ui.unit.toSize
+import kotlin.jvm.JvmName
 
 // Rect operator Offset
 
@@ -193,25 +199,25 @@ infix fun Number.intSize(rhs: Number): IntSize {
 // Offset operator
 
 @Stable
-operator fun Offset.times(rhs: Pair<Number, Number>): Offset {
+operator fun Offset.times(rhs: Vec2<Number>): Offset {
     val lhs = this
     return (lhs.x * rhs.first.toFloat()) offset (lhs.y * rhs.second.toFloat())
 }
 
 @Stable
-operator fun Offset.div(rhs: Pair<Number, Number>): Offset {
+operator fun Offset.div(rhs: Vec2<Number>): Offset {
     val lhs = this
     return lhs * ((1f / rhs.first.toFloat()) to (1f / rhs.second.toFloat()))
 }
 
 @Stable
-operator fun IntOffset.times(rhs: Pair<Number, Number>): IntOffset {
+operator fun IntOffset.times(rhs: Vec2<Number>): IntOffset {
     val lhs = this.toOffset()
     return (lhs * rhs).round()
 }
 
 @Stable
-operator fun IntOffset.div(rhs: Pair<Number, Number>): IntOffset {
+operator fun IntOffset.div(rhs: Vec2<Number>): IntOffset {
     val lhs = this.toOffset()
     return (lhs / rhs).round()
 }
@@ -219,25 +225,25 @@ operator fun IntOffset.div(rhs: Pair<Number, Number>): IntOffset {
 // Size operator
 
 @Stable
-operator fun Size.times(rhs: Pair<Number, Number>): Size {
+operator fun Size.times(rhs: Vec2<Number>): Size {
     val lhs = this
     return (lhs.width * rhs.first.toFloat()) size (lhs.height * rhs.second.toFloat())
 }
 
 @Stable
-operator fun Size.div(rhs: Pair<Number, Number>): Size {
+operator fun Size.div(rhs: Vec2<Number>): Size {
     val lhs = this
     return lhs * ((1f / rhs.first.toFloat()) to (1f / rhs.second.toFloat()))
 }
 
 @Stable
-operator fun IntSize.times(rhs: Pair<Number, Number>): IntSize {
+operator fun IntSize.times(rhs: Vec2<Number>): IntSize {
     val lhs = this.toSize()
     return (lhs * rhs).roundToIntSize()
 }
 
 @Stable
-operator fun IntSize.div(rhs: Pair<Number, Number>): IntSize {
+operator fun IntSize.div(rhs: Vec2<Number>): IntSize {
     val lhs = this.toSize()
     return (lhs / rhs).roundToIntSize()
 }
@@ -361,3 +367,35 @@ fun IntSize.coerceAtLeast(minimumValue: Size): IntSize {
 fun IntSize.coerceAtMost(maximumValue: Size): IntSize {
     return coerceAtMost(maximumValue.roundToIntSize())
 }
+
+// Density
+
+val Dp.px: Float
+    @Composable
+    get() = LocalDensity.current.run { toPx() }
+
+val TextUnit.px: Float
+    @Composable
+    get() = LocalDensity.current.run { toPx() }
+
+val Number.dp: Dp
+    @Composable
+    get() = LocalDensity.current.run { toFloat().toDp() }
+
+val Number.sp: TextUnit
+    @Composable
+    get() = LocalDensity.current.run { toFloat().toSp() }
+
+val DpSize.px: Size
+    @Composable
+    get() = LocalDensity.current.run { toSize() }
+
+val Size.dp: DpSize
+    @Composable
+    get() = LocalDensity.current.run { toDpSize() }
+
+val IntSize.dp: DpSize
+    @JvmName("getDpIntSize")
+    @Composable
+    get() = LocalDensity.current.run { toSize().dp }
+

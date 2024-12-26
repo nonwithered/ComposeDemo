@@ -47,7 +47,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
@@ -57,6 +56,7 @@ import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.utils.elseZero
 import compose.project.demo.common.utils.intOffset
+import compose.project.demo.common.utils.px
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
@@ -287,10 +287,10 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
 
     @Composable
     private fun BoxScope.TestAnchoredDraggable() {
-        val density = LocalDensity.current
         val defaultActionSize = 200.dp
-        val endActionSizePx = with(density) { defaultActionSize.toPx() }
-        val startActionSizePx = with(density) { defaultActionSize.toPx() }
+        val endActionSizePx = defaultActionSize.px
+        val startActionSizePx = defaultActionSize.px
+        val velocityThresholdPx = 100.dp.px
         val state = remember {
             AnchoredDraggableState(
                 initialValue = DragAnchors.Center,
@@ -300,7 +300,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                     DragAnchors.End at endActionSizePx
                 },
                 positionalThreshold = { distance: Float -> distance * 0.5f },
-                velocityThreshold = { with(density) { 100.dp.toPx() } },
+                velocityThreshold = { velocityThresholdPx },
                 snapAnimationSpec = spring(),
                 decayAnimationSpec = exponentialDecay(),
             )
@@ -408,7 +408,6 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
 
     @Composable
     private fun BoxScope.TestAwaitPointerEvent() {
-        val density = LocalDensity.current
         val areaWidth = 50
         fun PointerInputChange?.isDown(): Boolean {
             if (this === null) {
@@ -431,24 +430,18 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                         while (currentContext.isActive) {
                             val eventInitial = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull()
                             val eventInitialConsumed = eventInitial?.isConsumed
-                            density.run {
-                                if (eventInitial?.position?.x.elseZero in (areaWidth * 3).dp.toPx()..(areaWidth * 4).dp.toPx()) {
-                                    eventInitial?.consume()
-                                }
+                            if (eventInitial?.position?.x.elseZero in (areaWidth * 3).dp.toPx()..(areaWidth * 4).dp.toPx()) {
+                                eventInitial?.consume()
                             }
                             val eventMain = awaitPointerEvent(PointerEventPass.Main).changes.firstOrNull()
                             val eventMainConsumed = eventMain?.isConsumed
-                            density.run {
-                                if (eventMain?.position?.x.elseZero in (areaWidth * 4).dp.toPx()..(areaWidth * 5).dp.toPx()) {
-                                    eventMain?.consume()
-                                }
+                            if (eventMain?.position?.x.elseZero in (areaWidth * 4).dp.toPx()..(areaWidth * 5).dp.toPx()) {
+                                eventMain?.consume()
                             }
                             val eventFinal = awaitPointerEvent(PointerEventPass.Final).changes.firstOrNull()
                             val eventFinalConsumed = eventFinal?.isConsumed
-                            density.run {
-                                if (eventFinal?.position?.x.elseZero in (areaWidth * 5).dp.toPx()..(areaWidth * 6).dp.toPx()) {
-                                    eventFinal?.consume()
-                                }
+                            if (eventFinal?.position?.x.elseZero in (areaWidth * 5).dp.toPx()..(areaWidth * 6).dp.toPx()) {
+                                eventFinal?.consume()
                             }
                             if (eventInitial.isDown() && eventMain.isDown() && eventFinal.isDown()) {
                                 parentCount++
@@ -467,6 +460,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                     .weight(1f)
                     .background(Color.Red),
             )
+            /*
             var awaitEachGestureState by remember {
                 mutableStateOf("")
             }
@@ -485,24 +479,18 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                         awaitEachGesture {
                             val eventInitial = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull()
                             val eventInitialConsumed = eventInitial?.isConsumed
-                            density.run {
-                                if (eventInitial?.position?.x.elseZero in (areaWidth * 0).dp.toPx()..(areaWidth * 1).dp.toPx()) {
-                                    eventInitial?.consume()
-                                }
+                            if (eventInitial?.position?.x.elseZero in (areaWidth * 0).dp.toPx()..(areaWidth * 1).dp.toPx()) {
+                                eventInitial?.consume()
                             }
                             val eventMain = awaitPointerEvent(PointerEventPass.Main).changes.firstOrNull()
                             val eventMainConsumed = eventMain?.isConsumed
-                            density.run {
-                                if (eventMain?.position?.x.elseZero in (areaWidth * 1).dp.toPx()..(areaWidth * 2).dp.toPx()) {
-                                    eventMain?.consume()
-                                }
+                            if (eventMain?.position?.x.elseZero in (areaWidth * 1).dp.toPx()..(areaWidth * 2).dp.toPx()) {
+                                eventMain?.consume()
                             }
                             val eventFinal = awaitPointerEvent(PointerEventPass.Final).changes.firstOrNull()
                             val eventFinalConsumed = eventFinal?.isConsumed
-                            density.run {
-                                if (eventFinal?.position?.x.elseZero in (areaWidth * 2).dp.toPx()..(areaWidth * 3).dp.toPx()) {
-                                    eventFinal?.consume()
-                                }
+                            if (eventFinal?.position?.x.elseZero in (areaWidth * 2).dp.toPx()..(areaWidth * 3).dp.toPx()) {
+                                eventFinal?.consume()
                             }
                             if (eventInitial.isDown() && eventMain.isDown() && eventFinal.isDown()) {
                                 awaitEachGestureCount++
@@ -511,6 +499,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                         }
                     },
             )
+             */
             var awaitPointerEventScopeState by remember {
                 mutableStateOf("")
             }
@@ -518,7 +507,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                 mutableStateOf(0)
             }
             Text(
-                text = "Scope $awaitPointerEventScopeCount $awaitPointerEventScopeState",
+                text = "Child $awaitPointerEventScopeCount $awaitPointerEventScopeState",
                 fontSize = 30.sp,
                 textAlign = TextAlign.Center,
                 color = Color.White,
@@ -531,24 +520,18 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                             while (currentContext.isActive) {
                                 val eventInitial = awaitPointerEvent(PointerEventPass.Initial).changes.firstOrNull()
                                 val eventInitialConsumed = eventInitial?.isConsumed
-                                density.run {
-                                    if (eventInitial?.position?.x.elseZero in (areaWidth * 0).dp.toPx()..(areaWidth * 1).dp.toPx()) {
-                                        eventInitial?.consume()
-                                    }
+                                if (eventInitial?.position?.x.elseZero in (areaWidth * 0).dp.toPx()..(areaWidth * 1).dp.toPx()) {
+                                    eventInitial?.consume()
                                 }
                                 val eventMain = awaitPointerEvent(PointerEventPass.Main).changes.firstOrNull()
                                 val eventMainConsumed = eventMain?.isConsumed
-                                density.run {
-                                    if (eventMain?.position?.x.elseZero in (areaWidth * 1).dp.toPx()..(areaWidth * 2).dp.toPx()) {
-                                        eventMain?.consume()
-                                    }
+                                if (eventMain?.position?.x.elseZero in (areaWidth * 1).dp.toPx()..(areaWidth * 2).dp.toPx()) {
+                                    eventMain?.consume()
                                 }
                                 val eventFinal = awaitPointerEvent(PointerEventPass.Final).changes.firstOrNull()
                                 val eventFinalConsumed = eventFinal?.isConsumed
-                                density.run {
-                                    if (eventFinal?.position?.x.elseZero in (areaWidth * 2).dp.toPx()..(areaWidth * 3).dp.toPx()) {
-                                        eventFinal?.consume()
-                                    }
+                                if (eventFinal?.position?.x.elseZero in (areaWidth * 2).dp.toPx()..(areaWidth * 3).dp.toPx()) {
+                                    eventFinal?.consume()
                                 }
                                 if (eventInitial.isDown() && eventMain.isDown() && eventFinal.isDown()) {
                                     awaitPointerEventScopeCount++

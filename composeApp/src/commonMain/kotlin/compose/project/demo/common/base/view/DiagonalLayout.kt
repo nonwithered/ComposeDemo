@@ -21,6 +21,7 @@ import compose.project.demo.common.utils.BaseModifierNodeElement
 import compose.project.demo.common.utils.BaseParentData
 import compose.project.demo.common.utils.BaseParentDataModifierNode
 import compose.project.demo.common.utils.ParentDataConverter
+import compose.project.demo.common.utils.Vec2
 import compose.project.demo.common.utils.coerceAtLeast
 import compose.project.demo.common.utils.horizontalBias
 import compose.project.demo.common.utils.intOffset
@@ -164,7 +165,7 @@ private data class DiagonalLayoutParentData private constructor(
     }
 }
 
-private val DiagonalLayoutParentData.placeFraction: Pair<Float, Float>
+private val DiagonalLayoutParentData.placeFraction: Vec2<Float>
     get() = placeFractionHorizontal to placeFractionVertical
 
 private data class DiagonalLayoutMeasurePolicy(
