@@ -4,7 +4,7 @@ import kotlin.reflect.KProperty
 
 abstract class BaseValueProxy<T> {
 
-    protected abstract var value: T
+    abstract var value: T
 
     override fun equals(other: Any?): Boolean {
         return value == other

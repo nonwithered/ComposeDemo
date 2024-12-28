@@ -24,8 +24,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
+import compose.project.demo.common.utils.AtomicRefProxy
 import compose.project.demo.common.utils.forEach
-import compose.project.demo.common.utils.swap
 import kotlinx.atomicfu.atomic
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.cancel
@@ -150,7 +150,7 @@ object TestCommon021Loadmore : TestCase<TestCommon021Loadmore> {
 
         private val paramsQueue = ArrayDeque<LoopParams<P>>()
 
-        private val coroutineScope = atomic<CoroutineScope?>(null)
+        private val coroutineScope = AtomicRefProxy<CoroutineScope?>(null)
 
         private suspend fun notifyChanged() {
             itemsChannel.send(items)
@@ -159,7 +159,7 @@ object TestCommon021Loadmore : TestCase<TestCommon021Loadmore> {
         suspend fun loop() {
             coroutineScope {
                 try {
-                    coroutineScope.swap(this)?.cancel()
+                    coroutineScope.getAndSet(this)?.cancel()
                     launch {
                         filterParams()
                     }
