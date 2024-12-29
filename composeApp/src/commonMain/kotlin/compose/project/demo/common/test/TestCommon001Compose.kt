@@ -14,7 +14,6 @@ import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,19 +27,32 @@ import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.test.collect.TestCase.Companion.TAG
 import compose.project.demo.common.utils.logD
 import compose.project.demo.common.utils.logE
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 
 object TestCommon001Compose : TestCase<TestCommon001Compose> {
 
+    private var needGlobal = true
+    private var editText = mutableStateOf("")
+    private var showText = mutableStateOf(Clock.System.now().toString())
+
     @Composable
     override fun BoxScope.Content() {
+        if (needGlobal) {
+            needGlobal = false
+            @Suppress("OPT_IN_USAGE")
+            GlobalScope.launch(Dispatchers.Main) {
+                delay(3000)
+                showText.value = "global"
+                TAG.logE(AssertionError()) { "set global" }
+            }
+        }
         TAG.logE (AssertionError()) { "stackTrace Composable" }
-        var editText by remember {
-            mutableStateOf("")
-        }
-        var showText by remember {
-            mutableStateOf(Clock.System.now().toString())
-        }
+        var editText by editText
+        var showText by showText
         A("editText", editText)
         B("showText", showText)
         C("editText", editText)
