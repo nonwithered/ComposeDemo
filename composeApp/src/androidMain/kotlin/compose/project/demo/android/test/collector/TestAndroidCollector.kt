@@ -13,6 +13,7 @@ object TestAndroidCollector : BaseTestCollector() {
         TestAndroid001NestedScrollInteropSamples.asSelectItem,
         TestAndroid002NavHost.asSelectItem,
         TestAndroid003NestedScroll,
+        TestAndroid004Recompose.asSelectItem,
     )
 
     private inline val <reified T : TestCase<T>> TestCase<T>.asSelectItem: SelectItem
