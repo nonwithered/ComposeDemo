@@ -41,6 +41,10 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
         var showText by remember {
             mutableStateOf(Clock.System.now().toString())
         }
+        A("editText", editText)
+        B("showText", showText)
+        C("editText", editText)
+        C("showText", showText)
         Row(
             modifier = Modifier.fillMaxWidth()
                 .fillMaxHeight(0.8f)
@@ -88,5 +92,21 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
                 }
             }
         }
+    }
+
+    @Composable
+    private fun A(msg: String, a: String) {
+        TAG.logD { "A $msg $a" }
+    }
+
+    @Composable
+    private fun B(msg: String, a: String) {
+        TAG.logD { "B $msg $a" }
+    }
+
+    @Composable
+    private fun C(msg: String, a: String): String {
+        TAG.logD { "C $msg $a" }
+        return a
     }
 }

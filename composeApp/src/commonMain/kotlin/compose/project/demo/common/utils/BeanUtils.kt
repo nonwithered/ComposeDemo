@@ -2,8 +2,12 @@ package compose.project.demo.common.utils
 
 import kotlin.jvm.JvmName
 
+inline fun <T : Any> T?.elseValue(crossinline value: () -> T): T {
+    return this ?: value()
+}
+
 fun <T : Any> T?.elseValue(value: T): T {
-    return this ?: value
+    return elseValue { value }
 }
 
 val Boolean?.elseTrue
@@ -54,7 +58,7 @@ val <K, V> MutableMap<K, V>?.elseEmpty: Map<K, V>
 inline val <reified T> Array<T>?.elseEmpty: Array<T>
     get() = elseValue(arrayOf())
 
-val Iterable<Any?>.combinedHashCode: Int
+val Iterable<Any?>.hashCodeCombined: Int
     get() {
         var result = 1
         forEach {
@@ -64,7 +68,7 @@ val Iterable<Any?>.combinedHashCode: Int
         return result
     }
 
-infix fun List<Any?>.combinedEquals(rhs: List<Any?>): Boolean {
+infix fun List<Any?>.equalsCombined(rhs: List<Any?>): Boolean {
     val lhs = this
     if (lhs.size != rhs.size) {
         return false

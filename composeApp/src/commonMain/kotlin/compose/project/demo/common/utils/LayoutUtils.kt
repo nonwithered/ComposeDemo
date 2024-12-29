@@ -121,20 +121,21 @@ abstract class BaseModifierNodeElement<N : Modifier.Node>(
     protected open val debugInspectorInfo: Boolean
         get() = true
 
-    protected val propertyProxyList: MutableList<PropertyProxy<Any, out Any>> = mutableListOf()
+    protected val proxyList: MutableList<PropertyProxy<Any, out Any>> = mutableListOf()
 
     private val propertyList: List<Any?>
-        get() = propertyProxyList.map {
+        get() = proxyList.map {
             it.getValue(this)
         }
 
     protected inline fun <reified T : Any> String.property(v: T): T {
-        propertyProxyList += createPropertyProxy(this@BaseModifierNodeElement, this, v)
+        val proxy = createPropertyProxy(this@BaseModifierNodeElement, this, v)
+        proxyList += proxy
         return v
     }
 
     override fun hashCode(): Int {
-        return propertyList.combinedHashCode
+        return propertyList.hashCodeCombined
     }
 
     override fun equals(other: Any?): Boolean {
@@ -145,7 +146,7 @@ abstract class BaseModifierNodeElement<N : Modifier.Node>(
             return false
         }
         other as BaseModifierNodeElement<*>
-        return propertyList combinedEquals other.propertyList
+        return propertyList equalsCombined other.propertyList
     }
 
     override fun InspectorInfo.inspectableProperties() {
@@ -158,7 +159,7 @@ abstract class BaseModifierNodeElement<N : Modifier.Node>(
 
     private fun InspectorInfo.inspectorInfo() {
         name = type.simpleName
-        propertyProxyList.forEach {
+        proxyList.forEach {
             properties[it.k] = it.getValue(this@BaseModifierNodeElement).toString()
         }
     }

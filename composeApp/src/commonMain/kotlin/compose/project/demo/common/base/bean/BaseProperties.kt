@@ -1,16 +1,18 @@
 package compose.project.demo.common.base.bean
 
+import compose.project.demo.common.utils.equalsCombined
+import compose.project.demo.common.utils.hashCodeCombined
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
 
-interface BasePropertyOwner<V> {
+interface BasePropertyOwner<V : Any> {
 
     fun getPropertyValue(type: KClass<*>, k: String): V?
 
     fun setPropertyValue(type: KClass<*>, k: String, v: V?)
 }
 
-data class PropertyProxy<V, T : V>(
+data class PropertyProxy<V : Any, T : V>(
     val k: String,
     val type: KClass<*>,
 ) {
@@ -47,7 +49,7 @@ data class PropertyProxy<V, T : V>(
     }
 }
 
-inline fun <V, reified T : V> createPropertyProxy(owner: BasePropertyOwner<V>, k: String, v: T?): PropertyProxy<V, T> {
+inline fun <V : Any, reified T : V> createPropertyProxy(owner: BasePropertyOwner<V>, k: String, v: T?): PropertyProxy<V, T> {
     val type = T::class
     if (v !== null) {
         owner.setPropertyValue(type, k, v)
@@ -55,9 +57,32 @@ inline fun <V, reified T : V> createPropertyProxy(owner: BasePropertyOwner<V>, k
     return PropertyProxy(k, type)
 }
 
-abstract class BaseProperties<V> : BasePropertyOwner<V> {
+abstract class BaseProperties<V : Any> : BasePropertyOwner<V> {
+
+    protected val proxyList: MutableList<PropertyProxy<V, out V>> = mutableListOf()
+
+    private val propertyList: List<V?>
+        get() = proxyList.map {
+            it.getValue(this)
+        }
 
     protected inline fun <reified T : V> String.property(v: T? = null): PropertyProxy<V, T> {
-        return createPropertyProxy(this@BaseProperties, this, v)
+        val proxy = createPropertyProxy(this@BaseProperties, this, v)
+        proxyList += proxy
+        return proxy
+    }
+
+    override fun hashCode(): Int {
+        return proxyList.hashCodeCombined
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) {
+            return true
+        }
+        if (other !is BaseProperties<*>) {
+            return false
+        }
+        return propertyList equalsCombined other.propertyList
     }
 }
