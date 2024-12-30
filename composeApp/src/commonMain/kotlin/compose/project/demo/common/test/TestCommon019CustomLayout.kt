@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.layout
 import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.layout.positionInParent
@@ -34,10 +33,7 @@ import androidx.compose.ui.unit.sp
 import compose.project.demo.common.base.view.DiagonalLayout
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.utils.intOffset
-import compose.project.demo.common.utils.intSize
 import compose.project.demo.common.utils.offset
-import compose.project.demo.common.utils.rect
-import compose.project.demo.common.utils.size
 
 object TestCommon019CustomLayout : TestCase<TestCommon019CustomLayout> {
 
@@ -62,7 +58,7 @@ object TestCommon019CustomLayout : TestCase<TestCommon019CustomLayout> {
     }
 
     @Composable
-    private fun BoxScope.TestDiagonalLayout() {
+    fun BoxScope.TestDiagonalLayout() {
         val list = remember {
             listOf(
                 "TopStart" to Alignment.TopStart,
