@@ -67,7 +67,6 @@ import compose.project.demo.common.utils.px
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
 
-@OptIn(ExperimentalFoundationApi::class)
 object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
 
     private val list = listOf<@Composable BoxScope.() -> Unit>(
@@ -170,6 +169,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
         }
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun BoxScope.TestCombinedClickable() {
         var longClick by remember {
@@ -293,6 +293,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
         End,
     }
 
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun BoxScope.TestAnchoredDraggable() {
         val defaultActionSize = 200.dp
