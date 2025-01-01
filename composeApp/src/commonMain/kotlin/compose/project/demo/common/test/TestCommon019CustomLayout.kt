@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import compose.project.demo.common.base.view.DiagonalLayout
 import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.utils.intOffset
+import compose.project.demo.common.utils.measure
 import compose.project.demo.common.utils.offset
 
 object TestCommon019CustomLayout : TestCase<TestCommon019CustomLayout> {
@@ -95,6 +96,12 @@ object TestCommon019CustomLayout : TestCase<TestCommon019CustomLayout> {
                         .fillMaxWidth(0.5f)
                         .height(120.dp)
                         .placeFractionHorizontal(0.5f)
+                        .layout { measurable, constraints ->
+                            val placeable = measurable.measure(constraints)
+                            layout(placeable.width, placeable.height) {
+                                placeable.placeRelative(0, 0)
+                            }
+                        }
                         .placeFractionVertical(2f),
                 )
                 Spacer(

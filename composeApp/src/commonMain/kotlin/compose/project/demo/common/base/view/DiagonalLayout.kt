@@ -125,13 +125,14 @@ private class DiagonalLayoutHorizontalNode(
     override val converter = DiagonalLayoutParentData.parentDataConverter
 
     override fun update(parentData: DiagonalLayoutParentData, density: Density) {
+        "DiagonalLayout".logD { "DiagonalLayoutHorizontalNode update before parentData $parentData" }
         parentData.placeFractionHorizontal = placeFractionHorizontal
+        "DiagonalLayout".logD { "DiagonalLayoutHorizontalNode update after parentData $parentData" }
     }
 
     override fun modifyParentData(parentData: Any?, density: Density): DiagonalLayoutParentData? {
-        return super.modifyParentData(parentData, density).also {
-            "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutHorizontalNode modifyParentData" }
-        }
+        "DiagonalLayout".logD { "DiagonalLayoutHorizontalNode modifyParentData $parentData" }
+        return super.modifyParentData(parentData, density)
     }
 }
 
@@ -142,13 +143,14 @@ private class DiagonalLayoutVerticalNode(
     override val converter = DiagonalLayoutParentData.parentDataConverter
 
     override fun update(parentData: DiagonalLayoutParentData, density: Density) {
+        "DiagonalLayout".logD { "DiagonalLayoutVerticalNode update before parentData $parentData" }
         parentData.placeFractionVertical = placeFractionVertical
+        "DiagonalLayout".logD { "DiagonalLayoutVerticalNode update after parentData $parentData" }
     }
 
     override fun modifyParentData(parentData: Any?, density: Density): DiagonalLayoutParentData? {
-        return super.modifyParentData(parentData, density).also {
-            "DiagonalLayout".logD(AssertionError()) { "DiagonalLayoutVerticalNode modifyParentData" }
-        }
+        "DiagonalLayout".logD { "DiagonalLayoutVerticalNode modifyParentData $parentData" }
+        return super.modifyParentData(parentData, density)
     }
 }
 
