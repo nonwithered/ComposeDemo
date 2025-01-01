@@ -27,6 +27,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
@@ -44,6 +45,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEvent
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
@@ -57,8 +59,10 @@ import androidx.compose.ui.unit.round
 import androidx.compose.ui.unit.sp
 import compose.project.demo.common.base.bean.getValue
 import compose.project.demo.common.test.collect.TestCase
+import compose.project.demo.common.test.collect.TestCase.Companion.TAG
 import compose.project.demo.common.utils.elseZero
 import compose.project.demo.common.utils.intOffset
+import compose.project.demo.common.utils.logD
 import compose.project.demo.common.utils.px
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.isActive
@@ -77,6 +81,7 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
         { TestAnchoredDraggable() },
         { TestDetectGestures() },
         { TestAwaitPointerEvent() },
+        { TestLogOrder() },
     )
 
     @Composable
@@ -564,6 +569,87 @@ object TestCommon020Gestures : TestCase<TestCommon020Gestures> {
                 Spacer(modifier = Modifier.fillMaxHeight().width(areaWidth.dp).background(Color.DarkGray))
                 Spacer(modifier = Modifier.fillMaxHeight().width(areaWidth.dp).background(Color.LightGray))
                 Spacer(modifier = Modifier.fillMaxHeight().width(areaWidth.dp).background(Color.DarkGray))
+            }
+        }
+    }
+
+    @Composable
+    private fun TestLogOrder() {
+        val height = 40.dp
+        fun Modifier.pointerInputModifier(a: Any, b: Any): Modifier = pointerInput(Unit) {
+            val currentContext = currentCoroutineContext()
+            awaitPointerEventScope {
+                while (currentContext.isActive) {
+                    var e: PointerEvent
+                    e = awaitPointerEvent(PointerEventPass.Initial)
+                    TAG.logD(AssertionError()) { "pointerInput Init $a ${e.changes.first().position}" }
+                    e = awaitPointerEvent(PointerEventPass.Main)
+                    TAG.logD { "pointerInput Main $b ${e.changes.first().position}" }
+                }
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .pointerInputModifier(1, 42)
+                .pointerInputModifier(2, 41)
+                .pointerInputModifier(3, 40),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pointerInputModifier(4, 39)
+                    .pointerInputModifier(5, 38)
+                    .pointerInputModifier(6, 37),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(Color.Red)
+                        .height(height)
+                        .fillMaxWidth()
+                        .pointerInputModifier(7, 36)
+                        .pointerInputModifier(8, 35)
+                        .pointerInputModifier(9, 34),
+                ) {
+                }
+                Column(
+                    modifier = Modifier
+                        .background(Color.Green)
+                        .height(height)
+                        .fillMaxWidth()
+                        .pointerInputModifier(10, 33)
+                        .pointerInputModifier(11, 32)
+                        .pointerInputModifier(12, 31),
+                ) {
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .pointerInputModifier(13, 30)
+                    .pointerInputModifier(14, 29)
+                    .pointerInputModifier(15, 28),
+            ) {
+                Column(
+                    modifier = Modifier
+                        .background(Color.Blue)
+                        .height(height)
+                        .fillMaxWidth()
+                        .pointerInputModifier(16, 27)
+                        .pointerInputModifier(17, 26)
+                        .pointerInputModifier(18, 25),
+                ) {
+                }
+                Column(
+                    modifier = Modifier
+                        .background(Color.Yellow)
+                        .height(height)
+                        .fillMaxWidth()
+                        .pointerInputModifier(19, 24)
+                        .pointerInputModifier(20, 23)
+                        .pointerInputModifier(21, 22),
+                ) {
+                }
             }
         }
     }
