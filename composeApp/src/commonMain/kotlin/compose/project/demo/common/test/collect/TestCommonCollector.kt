@@ -1,8 +1,14 @@
 package compose.project.demo.common.test.collect
 
 import compose.project.demo.common.test.*
+import compose.project.demo.common.test.sample.*
 
 object TestCommonCollector : BaseTestCollector() {
+
+    private val sample = listOf(
+        SampleText.asCaseItem,
+        SampleEdit.asCaseItem,
+    )
 
     val list = listOf(
         TestCommon001Compose.asCaseItem,
@@ -28,5 +34,5 @@ object TestCommonCollector : BaseTestCollector() {
         TestCommon021Loadmore.asCaseItem,
         TestCommon022NormalCustomLayout.asCaseItem,
         TestCommon023NestedScroll.asCaseItem,
-    )
+    ) + sample
 }
