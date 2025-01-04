@@ -10,6 +10,7 @@ object TestCommonCollector : BaseTestCollector() {
         SampleEdit.asCaseItem,
         SampleImage.asCaseItem,
         SampleCanvas.asCaseItem,
+        SampleSpan.asCaseItem,
     )
 
     val list = listOf(

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="case_002_test_text_res">00001111222233334444555566667777888899990000111122223333444455556666777788889999-</string>
+    <string name="sample_res_string">Hello, world.</string>
 </resources>
