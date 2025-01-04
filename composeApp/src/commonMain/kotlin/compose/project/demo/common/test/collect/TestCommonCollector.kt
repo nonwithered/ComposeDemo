@@ -8,6 +8,7 @@ object TestCommonCollector : BaseTestCollector() {
     private val sample = listOf(
         SampleText.asCaseItem,
         SampleEdit.asCaseItem,
+        SampleImage.asCaseItem,
     )
 
     val list = listOf(
