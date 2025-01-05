@@ -12,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -47,10 +48,10 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
             GlobalScope.launch(Dispatchers.Main) {
                 delay(3000)
                 showText.value = "global"
-                TAG.logE(AssertionError()) { "set global" }
+//                TAG.logE(AssertionError()) { "set global" }
             }
         }
-        TAG.logE (AssertionError()) { "stackTrace Composable" }
+//        TAG.logE (AssertionError()) { "stackTrace Composable" }
         var editText by editText
         var showText by showText
         A("editText", editText)
@@ -81,7 +82,7 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
                         onClick = {
                             showText = editText
                             TAG.logD { "onClick $editText" }
-                            TAG.logE(AssertionError()) { "stackTrace onClick" }
+//                            TAG.logE(AssertionError()) { "stackTrace onClick" }
                         },
                         modifier = Modifier.width(120.dp)
                             .align(Alignment.CenterVertically),
@@ -109,16 +110,25 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
     @Composable
     private fun A(msg: String, a: String) {
         TAG.logD { "A $msg $a" }
+        SideEffect {
+            TAG.logD { "A $msg $a SideEffect" }
+        }
     }
 
     @Composable
     private fun B(msg: String, a: String) {
         TAG.logD { "B $msg $a" }
+        SideEffect {
+            TAG.logD { "B $msg $a SideEffect" }
+        }
     }
 
     @Composable
     private fun C(msg: String, a: String): String {
         TAG.logD { "C $msg $a" }
+        SideEffect {
+            TAG.logD { "C $msg $a SideEffect" }
+        }
         return a
     }
 }
