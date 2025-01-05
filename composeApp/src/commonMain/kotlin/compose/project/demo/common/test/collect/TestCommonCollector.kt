@@ -11,6 +11,7 @@ object TestCommonCollector : BaseTestCollector() {
         SampleImage.asCaseItem,
         SampleCanvas.asCaseItem,
         SampleSpan.asCaseItem,
+        SampleContainer.asCaseItem,
     )
 
     val list = listOf(

@@ -63,11 +63,11 @@ object SampleSpan : TestCase<SampleSpan> {
         Text(
             text = text,
             modifier = Modifier.align(Alignment.Center).background(Color.Green),
-            style = baseTextStyle,
+            style = sampleTextStyle,
         )
     }
 
-    private val baseTextStyle = TextStyle(
+    private val sampleTextStyle = TextStyle(
         color = Color.Red,
         fontSize = 24.sp,
         fontStyle = FontStyle.Italic,
