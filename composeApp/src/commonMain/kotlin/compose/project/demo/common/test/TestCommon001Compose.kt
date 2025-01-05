@@ -12,6 +12,7 @@ import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,6 +33,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import kotlinx.datetime.Clock
 
 object TestCommon001Compose : TestCase<TestCommon001Compose> {
@@ -58,6 +60,14 @@ object TestCommon001Compose : TestCase<TestCommon001Compose> {
         B("showText", showText)
         C("editText", editText)
         C("showText", showText)
+        LaunchedEffect(Unit) {
+            withContext(Dispatchers.Default) {
+                delay(5000L)
+                TAG.logD { "bg editText $editText" }
+                TAG.logD { "bg showText $showText" }
+                editText = "qwerty"
+            }
+        }
         Row(
             modifier = Modifier.fillMaxWidth()
                 .fillMaxHeight(0.8f)

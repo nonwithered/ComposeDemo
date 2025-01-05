@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 fun kapt(dependency: Provider<MinimalExternalModuleDependency>) {
     configurations.getByName("kapt").dependencies.add(dependency.get())
@@ -100,6 +101,11 @@ kotlin {
             implementation(libs.kotlinx.atomicfu)
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
+            implementation(project.dependencies.platform("io.insert-koin:koin-bom:4.1.0-Beta3"))
+            implementation("io.insert-koin:koin-core:4.1.0-Beta3")
+            api("io.insert-koin:koin-annotations:2.0.0-Beta3")
+            implementation("io.insert-koin:koin-compose:4.1.0-Beta3")
+            implementation("io.insert-koin:koin-compose-viewmodel:4.1.0-Beta3")
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -139,6 +145,8 @@ android {
 
 dependencies {
     debugImplementation(compose.uiTooling)
+    add("kspCommonMainMetadata", "io.insert-koin:koin-ksp-compiler:2.0.0-Beta3")
+    add("kspAndroid", "io.insert-koin:koin-ksp-compiler:2.0.0-Beta3")
 }
 
 compose.desktop {
@@ -150,5 +158,11 @@ compose.desktop {
             packageName = "compose.project.demo"
             packageVersion = "1.0.0"
         }
+    }
+}
+
+project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+    if(name != "kspCommonMainKotlinMetadata") {
+        dependsOn("kspCommonMainKotlinMetadata")
     }
 }

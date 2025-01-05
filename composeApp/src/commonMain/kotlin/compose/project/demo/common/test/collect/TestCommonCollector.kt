@@ -13,6 +13,7 @@ object TestCommonCollector : BaseTestCollector() {
         SampleSpan.asCaseItem,
         SampleContainer.asCaseItem,
         SampleLifecycle.asCaseItem,
+        SampleKoin.asCaseItem,
     )
 
     val list = listOf(
