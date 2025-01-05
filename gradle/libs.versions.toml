@@ -1,8 +1,12 @@
 [versions]
 agp = "8.7.2"
 autoService = "1.1.0"
+coilCompose = "3.0.4"
+coilNetworkOkhttp = "3.0.4"
 constraintlayoutCompose = "1.0.1"
 constraintlayoutComposeMultiplatform = "0.4.0"
+ktorClientAndroid = "3.0.3"
+ktorClientJava = "3.0.3"
 zacsweersAutoserviceKsp = "0.2.1"
 ksp = "2.1.0-1.0.29"
 kapt = "2.1.0"
@@ -37,7 +41,12 @@ androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constr
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycleViewmodelCompose" }
 androidx-runtime-livedata = { module = "androidx.compose.runtime:runtime-livedata", version.ref = "runtimeLivedata" }
 auto-service = { module = "com.google.auto.service:auto-service", version.ref = "autoService" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 constraintlayout-compose-multiplatform = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version.ref = "constraintlayoutComposeMultiplatform" }
+ktor-client-java = { module = "io.ktor:ktor-client-java", version.ref = "ktorClientJava" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
 zacsweers-autoservice-ksp = { module = "dev.zacsweers.autoservice.ksp:dev.zacsweers.autoservice.ksp.gradle.plugin", version.ref = "zacsweersAutoserviceKsp" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }

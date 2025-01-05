@@ -78,6 +78,8 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
             implementation(libs.androidx.navigation.compose)
+            implementation(libs.coil.network.okhttp)
+            implementation(libs.ktor.client.android)
 //            implementation(libs.androidx.constraintlayout)
 //            implementation(libs.androidx.constraintlayout.compose)
 //            kapt(libs.auto.service)
@@ -96,11 +98,14 @@ kotlin {
             implementation(libs.androidx.lifecycle.runtime.compose)
             implementation(libs.constraintlayout.compose.multiplatform)
             implementation(libs.kotlinx.atomicfu)
+            implementation(libs.coil.compose)
+            implementation(libs.coil.network.ktor3)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
+            implementation(libs.ktor.client.java)
         }
     }
 }
