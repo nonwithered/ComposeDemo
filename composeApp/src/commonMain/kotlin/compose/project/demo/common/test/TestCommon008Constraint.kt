@@ -21,21 +21,21 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import compose.project.demo.common.test.collect.TestCase
 import composedemo.composeapp.generated.resources.Res
-import composedemo.composeapp.generated.resources.set_up_svgrepo_com
-import composedemo.composeapp.generated.resources.thumbs_up_svgrepo_com
-import composedemo.composeapp.generated.resources.user_svgrepo_com
+import composedemo.composeapp.generated.resources.setup
+import composedemo.composeapp.generated.resources.digg
+import composedemo.composeapp.generated.resources.avatar
 import org.jetbrains.compose.resources.painterResource
 
 object TestCommon008Constraint : TestCase<TestCommon008Constraint> {
 
     @Composable
     override fun BoxScope.Content() {
-        val avatarId = "avatar"
+        val avatarId = "avatarId"
         val nicknameId = "nicknameId"
         val descId = "descId"
         val infoId = "infoId"
         val diggId = "diggId"
-        val setupId = "setup"
+        val setupId = "setupId"
         val constraintSet = remember {
             ConstraintSet {
                 val avatar = createRefFor(avatarId)
@@ -77,7 +77,7 @@ object TestCommon008Constraint : TestCase<TestCommon008Constraint> {
             constraintSet = constraintSet,
         ) {
             Image(
-                painter = painterResource(Res.drawable.user_svgrepo_com),
+                painter = painterResource(Res.drawable.avatar),
                 contentDescription = "avatar",
                 modifier = Modifier.layoutId(avatarId)
                     .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
@@ -123,7 +123,7 @@ object TestCommon008Constraint : TestCase<TestCommon008Constraint> {
             )
 
             Image(
-                painter = painterResource(Res.drawable.thumbs_up_svgrepo_com),
+                painter = painterResource(Res.drawable.digg),
                 contentDescription = "digg",
                 modifier = Modifier.layoutId(diggId)
                     .padding(end = 16.dp, top = 16.dp)
@@ -132,7 +132,7 @@ object TestCommon008Constraint : TestCase<TestCommon008Constraint> {
             )
 
             Image(
-                painter = painterResource(Res.drawable.set_up_svgrepo_com),
+                painter = painterResource(Res.drawable.setup),
                 contentDescription = "setup",
                 modifier = Modifier.layoutId(setupId)
                     .padding(end = 16.dp, bottom = 16.dp)

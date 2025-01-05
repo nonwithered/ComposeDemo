@@ -18,9 +18,9 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import compose.project.demo.common.test.collect.TestCase
 import composedemo.composeapp.generated.resources.Res
-import composedemo.composeapp.generated.resources.set_up_svgrepo_com
-import composedemo.composeapp.generated.resources.thumbs_up_svgrepo_com
-import composedemo.composeapp.generated.resources.user_svgrepo_com
+import composedemo.composeapp.generated.resources.setup
+import composedemo.composeapp.generated.resources.digg
+import composedemo.composeapp.generated.resources.avatar
 import org.jetbrains.compose.resources.painterResource
 
 object TestCommon007Constraint : TestCase<TestCommon007Constraint> {
@@ -39,7 +39,7 @@ object TestCommon007Constraint : TestCase<TestCommon007Constraint> {
             val setup = createRef()
 
             Image(
-                painter = painterResource(Res.drawable.user_svgrepo_com),
+                painter = painterResource(Res.drawable.avatar),
                 contentDescription = "avatar",
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
                     .size(120.dp)
@@ -92,12 +92,10 @@ object TestCommon007Constraint : TestCase<TestCommon007Constraint> {
                 color = Color.Gray,
                 fontSize = 16.sp,
                 fontFamily = FontFamily.SansSerif,
-                overflow = TextOverflow.Ellipsis,
-                maxLines = 1,
             )
 
             Image(
-                painter = painterResource(Res.drawable.thumbs_up_svgrepo_com),
+                painter = painterResource(Res.drawable.digg),
                 contentDescription = "digg",
                 modifier = Modifier.padding(end = 16.dp, top = 16.dp)
                     .size(20.dp)
@@ -109,7 +107,7 @@ object TestCommon007Constraint : TestCase<TestCommon007Constraint> {
             )
 
             Image(
-                painter = painterResource(Res.drawable.set_up_svgrepo_com),
+                painter = painterResource(Res.drawable.setup),
                 contentDescription = "setup",
                 modifier = Modifier.padding(end = 16.dp, bottom = 16.dp)
                     .size(20.dp)

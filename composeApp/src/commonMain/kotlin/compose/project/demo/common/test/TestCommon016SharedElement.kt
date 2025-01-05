@@ -39,8 +39,8 @@ import compose.project.demo.common.test.collect.TestCase
 import compose.project.demo.common.utils.times
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
-import composedemo.composeapp.generated.resources.set_up_svgrepo_com
-import composedemo.composeapp.generated.resources.thumbs_up_svgrepo_com
+import composedemo.composeapp.generated.resources.setup
+import composedemo.composeapp.generated.resources.digg
 import org.jetbrains.compose.resources.painterResource
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -182,7 +182,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
         ) {
             Image(
                 modifier = Modifier.size(80.dp),
-                painter = painterResource(Res.drawable.thumbs_up_svgrepo_com),
+                painter = painterResource(Res.drawable.digg),
                 contentDescription = "",
             )
             Text(
@@ -218,7 +218,7 @@ object TestCommon016SharedElement : TestCase<TestCommon016SharedElement> {
                 modifier = Modifier.fillMaxSize(0.5f).align(Alignment.Start)
                     .background(Color.LightGray)
                     .imageModifier(),
-                painter = painterResource(Res.drawable.set_up_svgrepo_com),
+                painter = painterResource(Res.drawable.setup),
                 contentScale = ContentScale.FillBounds,
                 contentDescription = "",
             )

@@ -35,8 +35,8 @@ import compose.project.demo.common.utils.offset
 import compose.project.demo.common.utils.plus
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.compose_multiplatform
-import composedemo.composeapp.generated.resources.set_up_svgrepo_com
-import composedemo.composeapp.generated.resources.user_svgrepo_com
+import composedemo.composeapp.generated.resources.setup
+import composedemo.composeapp.generated.resources.avatar
 import org.jetbrains.compose.resources.painterResource
 
 
@@ -103,7 +103,7 @@ object TestCommon018SharedCustom : TestCase<TestCommon018SharedCustom> {
                         ),
                 )
                 Image(
-                    painter = painterResource(Res.drawable.user_svgrepo_com),
+                    painter = painterResource(Res.drawable.avatar),
                     contentDescription = "",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier.fillMaxWidth()
@@ -113,7 +113,7 @@ object TestCommon018SharedCustom : TestCase<TestCommon018SharedCustom> {
                         },
                 )
                 Image(
-                    painter = painterResource(Res.drawable.set_up_svgrepo_com),
+                    painter = painterResource(Res.drawable.setup),
                     contentDescription = "",
                     contentScale = ContentScale.FillBounds,
                     colorFilter = ColorFilter.tint(Color.Red, BlendMode.SrcIn),
