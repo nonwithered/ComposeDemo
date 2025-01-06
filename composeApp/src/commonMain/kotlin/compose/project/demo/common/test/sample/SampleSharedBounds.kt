@@ -3,10 +3,12 @@ package compose.project.demo.common.test.sample
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
@@ -14,7 +16,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -33,12 +34,9 @@ import androidx.compose.ui.unit.sp
 import compose.project.demo.common.test.collect.TestCase
 import composedemo.composeapp.generated.resources.Res
 import composedemo.composeapp.generated.resources.sample_res_anim_string
-import composedemo.composeapp.generated.resources.sample_res_string
 import org.jetbrains.compose.resources.stringResource
 
-typealias SampleContent = @Composable BoxScope.() -> Unit
-
-object SampleSharedElement : TestCase<SampleSharedElement> {
+object SampleSharedBounds : TestCase<SampleSharedBounds> {
 
     @OptIn(ExperimentalSharedTransitionApi::class)
     @Composable
@@ -96,8 +94,8 @@ object SampleSharedElement : TestCase<SampleSharedElement> {
                         modifier = Modifier
                             .fillMaxWidth(if (targetState == 0) 0.5f else 1f)
                             .align(Alignment.BottomEnd)
-                            .sharedElement(
-                                state = animSharedState,
+                            .sharedBounds(
+                                sharedContentState = animSharedState,
                                 animatedVisibilityScope = this@AnimatedContent,
                                 boundsTransform = { initialBounds, targetBounds ->
                                     tween(
@@ -105,7 +103,21 @@ object SampleSharedElement : TestCase<SampleSharedElement> {
                                         easing = LinearEasing,
                                     )
                                 },
-                            ), // .skipToLookaheadSize()
+                                enter = fadeIn(
+                                    animationSpec = tween(
+                                        durationMillis = 1000,
+                                        easing = LinearEasing,
+                                    ),
+                                ),
+                                exit = fadeOut(
+                                    animationSpec = tween(
+                                        durationMillis = 1000,
+                                        easing = LinearEasing,
+                                    ),
+                                ),
+                                resizeMode = SharedTransitionScope.ResizeMode.RemeasureToBounds, // SharedTransitionScope.ResizeMode.ScaleToBounds()
+                            )
+                            .skipToLookaheadSize(),
                     )
                 }
             }
