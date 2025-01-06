@@ -14,6 +14,8 @@ object TestCommonCollector : BaseTestCollector() {
         SampleContainer.asCaseItem,
         SampleLifecycle.asCaseItem,
         SampleKoin.asCaseItem,
+        SampleAnimatedVisibility.asCaseItem,
+        SampleAnimatedContent.asCaseItem,
     )
 
     val list = listOf(
