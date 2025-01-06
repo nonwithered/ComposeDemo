@@ -16,6 +16,7 @@ object TestCommonCollector : BaseTestCollector() {
         SampleKoin.asCaseItem,
         SampleAnimatedVisibility.asCaseItem,
         SampleAnimatedContent.asCaseItem,
+        SampleSharedElement.asCaseItem,
     )
 
     val list = listOf(
