@@ -18,6 +18,7 @@ object TestCommonCollector : BaseTestCollector() {
         SampleAnimatedContent.asCaseItem,
         SampleSharedElement.asCaseItem,
         SampleSharedBounds.asCaseItem,
+        SampleAnim.asCaseItem,
     )
 
     val list = listOf(
